@@ -25,36 +25,35 @@ function typeFromClass(cls) {
   throw new Error(cls+" is not a class");
 }
 
-//function onKeyUp(evt) {
-//  if(evt.keyCode === 0x0D) {
-//    var range = window.getSelection().getRangeAt(0);
-//    var rangeContainer = window.getSelection().focusNode;
-//    //var rangeContainer = range.startContainer || range.endContainer;
-//    //console.log(rangeContainer);
-//    if(rangeContainer.nodeType === 3) {
-//      rangeContainer = rangeContainer.parentNode;
-//    }
-//    if(rangeContainer != editor) {
-//      var newBreak = document.createElement("br");
-//      editor.insertBefore(newBreak, rangeContainer.nextSibling);
-//      range.setStartAfter(newBreak);
-//      evt.preventDefault();
-//    }
-//  }
-//  setTimeout(updateTextArea, 50); //eh
-//}
+function invisibleKeyEvent(evt) {
+  if(evt.key === "Left") return true;
+  if(evt.key === "Right") return true;
+  if(evt.key === "Up") return true;
+  if(evt.key === "Down") return true;
+
+  if(evt.keyCode === 0x25) return true;
+  if(evt.keyCode === 0x26) return true;
+  if(evt.keyCode === 0x27) return true;
+  if(evt.keyCode === 0x28) return true;
+
+  return false;
+}
 
 
-function updateTextArea() {
+
+function updateTextArea(evt) {
+  if(invisibleKeyEvent(evt))
+    return;
+
   editor.normalize();
   var childNodes = editor.childNodes;
   traversing = true;
   for(var i = 0; i < childNodes.length; i++) {
     var node = childNodes[i];
+    console.log(node);
     if(node.nodeType === node.TEXT_NODE) {
-      //console.log("wt: "+node.wholeText);
       var tokens = node.textContent.split(proc.whiteSpaceRegex);
-      //console.log("TEXT_TOKS: "+tokens.toSource());
+      console.log("TEXT_TOKS: "+tokens.toSource());
       var needReplacing = false;
       for(var token of tokens) {
         var procTok = proc.getToken(token);
@@ -65,11 +64,10 @@ function updateTextArea() {
       }
 
       if(needReplacing) {
-        //console.log("scheduling replace!");
+        console.log("scheduling replace!");
         scheduleReplace(node, makeHtmlForTokens(tokens));
-        //makeReplaceOperation(node, makeHtmlForTokens(tokens))();
       }
-    } else if(node.nodeType === node.ELEMENT_NODE) {
+    } else if((node.nodeType === node.ELEMENT_NODE) && (node.nodeName !== "BR")) {
       var currentClass = node.classList[0] || "";
       var nextSib = childNodes[i+1];
       if(nextSib && nextSib.nodeType == node.TEXT_NODE) {
@@ -94,7 +92,6 @@ function updateTextArea() {
       if(!valid) {
         console.log("scheduling replace!");
         scheduleReplace(node, makeHtmlForTokens(tokens));
-        //makeReplaceOperation(node, makeHtmlForTokens(tokens))();
       }
     }
   }
@@ -127,12 +124,12 @@ function makeHtmlForTokens(tokens) {
     if(procTok.type === Proc.INVALID) {
       var elt = document.createTextNode(token);
       if(token == "\n") {
-        //console.log("newlining");
+        console.log("newlining");
         elt = document.createElement("br");
       }
 
       elementsFrag.appendChild(elt);
-      console.log("text from "+procTok.type+" "+token);
+      console.log("text from "+procTok.type+" \""+token+"\"");
     } else {
       var cls = classFromType(procTok.type);
       var span = document.createElement("span");
@@ -158,4 +155,4 @@ function processOutstanding() {
 
 processOutstanding();
 
-document.addEventListener("keyup", updateTextArea, false);
+editor.addEventListener("input", updateTextArea, false);

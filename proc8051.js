@@ -1,6 +1,6 @@
 function Proc8051() {
   Proc.call(this);
-  this.constantRegex = /#([0-9a-fA-F]+[hbd])/;
+  this.constantRegex = /^#?([0-9a-fA-F]+[hbd]?)$/;
   this.docUrl = "http://www.keil.com/support/man/docs/is51/is51_%s.htm";
 
   this.addInstruction("acall", 1, "call subroutine at address");
@@ -156,17 +156,23 @@ Proc8051.prototype = Proc.prototype;
 Proc8051.prototype.parseConstant = function(constant) {
   var base = constant.charAt(constant.length-1).toLowerCase();
   var rawConstant = constant.replace(/[^\d]/g, "");
-  //console.log("rc: "+rawConstant);
   switch(base) {
     case "h":
       return parseInt(rawConstant, 16);
     case "b":
       return parseInt(rawConstant, 2);
-    case "d":
-      return parseInt(rawConstant, 10);
     case "o":
       return parseInt(rawConstant, 8);
+    case "d":
+    default:
+      return parseInt(rawConstant, 10);
   }
   throw new Error("Could not parse constant from "+constant);
 };
 
+Proc8051.prototype.getOpcode = function(tokens) {
+  if(tokens[0].type != Proc.INSTRUCTION)
+    throw new Error("opcodes need instructions first");
+  var argc = tokens[0].argc;
+  throw new Error("not implemented");
+};

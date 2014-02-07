@@ -13,21 +13,18 @@ Proc.CONSTANT = 2;
 Proc.SYMBOL = 3;
 
 Proc.prototype.addInstruction = function(name, argc, description) {
-  this.instructions.push({name: name, argc: argc, description: description, type: Proc.INSTRUCTION});
+  this.instructions.push({name: name.toLowerCase(), argc: argc, description: description, type: Proc.INSTRUCTION});
 }
 
 Proc.prototype.addSymbol = function(name, address, description) {
-  this.symbols.push({name: name, address: address, description: description, type: Proc.SYMBOL});
+  this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL});
 }
 
-Proc.prototype.getKeywords = function() {
-  return this.instructions.map(function(instr) { return instr.name; });
-};
-
 Proc.prototype.getInstructionByName = function(name) {
+  var lname = name.toLowerCase();
   for(var i = 0, len = this.instructions.length; i < len; i++) {
     var instr = this.instructions[i];
-    if(instr.name == name) {
+    if(instr.name == lname) {
       return instr;
     }
   }
