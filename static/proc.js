@@ -67,8 +67,9 @@ Proc.prototype.isSymbol = function(token) {
 };
 
 Proc.prototype.getSymbol = function(token) {
+  var ltoken = token.toLowerCase();
   for(var i = 0; i < this.symbols.length; i++) {
-    if(this.symbols[i].name === token) {
+    if(this.symbols[i].name === ltoken) {
       return this.symbols[i];
     }
   }
