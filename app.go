@@ -99,10 +99,31 @@ func (handler *RequestHandler) GenerateIds() {
   }
 }
 
+func IdFromPath(path string) string {
+  pathComps := strings.Split(path, "/")
+  return pathComps[len(pathComps)-1]
+}
 
-func (handler *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-  pathComps := strings.Split(r.URL.Path, "/")
-  fmt.Printf("pcLen: %d\n", len(pathComps))
+
+func (handler *RequestHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
+  text := []byte(r.FormValue("text"))
+
+  id := IdFromPath(r.URL.Path)
+  af, err := LoadAsmFile(id)
+  if err != nil {
+    af = &AsmFile{id, text}
+  } else {
+    af.Text = text
+  }
+
+  err = af.Save()
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+}
+
+func (handler *RequestHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
   if(len(r.URL.Path) <= 1) {
     id := <- handler.newIds
     fmt.Println("Redirecting");
@@ -115,17 +136,16 @@ func (handler *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
     http.Redirect(w, r, "/files/"+id, http.StatusFound)
     return
   }
-  id := pathComps[len(pathComps)-1]
+  id := IdFromPath(r.URL.Path)
   fmt.Println("Id: "+id)
 
   af, err := LoadAsmFile(id)
   if err != nil {
-    fmt.Println("404")
-    w.WriteHeader(404)
+    http.Error(w, err.Error(), http.StatusNotFound)
     return
   }
 
-  if(pathComps[0] == "get") {
+  if(strings.HasPrefix(r.URL.Path, "get")) {
     // raw data wanted "get"
     fmt.Println("serving a get!")
     http.ServeFile(w, r, af.GetPath())
@@ -135,6 +155,14 @@ func (handler *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 
   fmt.Println("serving file.html")
   http.ServeFile(w, r, "static/file.html")
+}
+
+func (handler *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+  if r.Method == "GET" {
+    handler.HandleGet(w, r)
+  } else if r.Method == "POST" {
+    handler.HandlePost(w, r)
+  }
 }
 
 func main() {

@@ -2,9 +2,10 @@
 
 var proc = new Proc8051();
 var editor = document.getElementById("editor");
+var saveButton = document.getElementById("save");
 
 var operationQueue = [];
-var traversing = false;
+var enabled = false;
 
 var classType = {};
 classType[Proc.INSTRUCTION] = "ins";
@@ -42,12 +43,17 @@ function invisibleKeyEvent(evt) {
 
 
 function updateTextArea(evt) {
-  if(invisibleKeyEvent(evt))
+  if(!enabled) {
+    evt.preventDefault();
     return;
+  }
+
+  if(invisibleKeyEvent(evt)) {
+    return;
+  }
 
   editor.normalize();
   var childNodes = editor.childNodes;
-  traversing = true;
   for(var i = 0; i < childNodes.length; i++) {
     var node = childNodes[i];
     console.log(node);
@@ -95,7 +101,6 @@ function updateTextArea(evt) {
       }
     }
   }
-  traversing = false;
   //TODO thread
   processOutstanding();
 
@@ -144,7 +149,6 @@ function makeHtmlForTokens(tokens) {
 }
 
 function processOutstanding() {
-  if(traversing) return;
   if(operationQueue.length === 0) return;
   var operation;
   while(operation = operationQueue.shift()) {
@@ -155,4 +159,32 @@ function processOutstanding() {
 
 processOutstanding();
 
+function loadCurrentFile() {
+  var loc = ""+window.location;
+  loc = loc.replace("files/", "files/get/");
+
+  var request = new XMLHttpRequest();
+  request.onload = function() {
+    editor.textContent = this.responseText;
+    enabled = true;
+  };
+  request.open("get", loc, true);
+  request.send();
+}
+
+function saveCurrentFile() {
+  var text = editor.innerHTML;
+  text = text.replace(/<br\/?>/g, "\n");
+  text = text.replace(/<[^>]+>/g, "");
+
+  var data = new FormData();
+  data.append("text", text);
+  var request = new XMLHttpRequest();
+  request.open("POST", window.location);
+  request.send(data);
+}
+
 editor.addEventListener("input", updateTextArea, false);
+saveButton.addEventListener("click", saveCurrentFile, false);
+
+loadCurrentFile();
