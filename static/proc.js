@@ -16,8 +16,8 @@ Proc.prototype.addInstruction = function(name, argc, description) {
   this.instructions.push({name: name.toLowerCase(), argc: argc, description: description, type: Proc.INSTRUCTION});
 }
 
-Proc.prototype.addSymbol = function(name, address, description) {
-  this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL});
+Proc.prototype.addSymbol = function(name, address, description, width) {
+  this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL, width: width});
 }
 
 Proc.prototype.getInstructionByName = function(name) {
