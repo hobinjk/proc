@@ -3,50 +3,50 @@ function Proc8051() {
   this.constantRegex = /^#?([0-9a-fA-F]+[hbd]?)$/;
   this.docUrl = "http://www.keil.com/support/man/docs/is51/is51_%s.htm";
 
-  this.addInstruction("acall", 1, "call subroutine at address");
-  this.addInstruction("add", 2, "add byte value to accumulator");
-  this.addInstruction("addc", 2, "add byte value and carry bit to accumulator");
-  this.addInstruction("ajmp", 1, "jump to address");
-  this.addInstruction("anl", 2, "bitwise and");
-  this.addInstruction("cjne", 3, "compare and jump if not equal");
-  this.addInstruction("clr", 1, "clear bit");
-  this.addInstruction("cpl", 1, "flip bit");
-  this.addInstruction("da", 1, "converts to BCD notation");
-  this.addInstruction("dec", 1, "decrement");
-  this.addInstruction("div", 1, "divide");
-  this.addInstruction("djnz", 2, "decrement and jump if zero");
-  this.addInstruction("inc", 1, "increment");
-  this.addInstruction("jb", 2, "jump if bit set");
-  this.addInstruction("jbc", 2, "jump if bit set, clearing bit");
-  this.addInstruction("jc", 1, "jump if carry flag is set");
-  this.addInstruction("jmp", 1, "jump by offset");
-  this.addInstruction("jnb", 2, "jump if bit unset");
-  this.addInstruction("jc", 1, "jump if carry flag is unset");
-  this.addInstruction("jnz", 1, "jump if the accumulator is not zero");
-  this.addInstruction("jz", 1, "jump if the accumulator is zero");
-  this.addInstruction("lcall", 1, "call subroutine at address");
-  this.addInstruction("ljmp", 1, "jump to address");
-  this.addInstruction("mov", 2, "move byte");
-  this.addInstruction("movc", 2, "move byte from program memory to accumulator");
-  this.addInstruction("movx", 2, "move byte from accumulator to program memory");
-  this.addInstruction("mul", 0, "multiply accumulator and B register");
-  this.addInstruction("nop", 0, "do nothing");
-  this.addInstruction("orl", 2, "bitwise or");
-  this.addInstruction("pop", 1, "pop byte from stack");
-  this.addInstruction("push", 1, "push byte onto stack");
-  this.addInstruction("ret", 0, "return from subroutine");
-  this.addInstruction("reti", 0, "return from interrupt");
-  this.addInstruction("rl", 1, "rotate left");
-  this.addInstruction("rlc", 1, "rotate left with carry");
-  this.addInstruction("rr", 1, "rotate right");
-  this.addInstruction("rlc", 1, "rotate right with carry");
-  this.addInstruction("setb", 1, "set bit");
-  this.addInstruction("sjmp", 1, "jump by signed offset");
-  this.addInstruction("subb", 2, "subtract byte value and carry flag");
-  this.addInstruction("swap", 1, "exchange low and high nibbles");
-  this.addInstruction("xch", 2, "exchange bytes");
-  this.addInstruction("xchd", 2, "exchange low nibbles");
-  this.addInstruction("xrl", 2, "bitwise xor");
+  this.addInstruction("acall", "call subroutine at address");
+  this.addInstruction("add", "add byte value to accumulator");
+  this.addInstruction("addc", "add byte value and carry bit to accumulator");
+  this.addInstruction("ajmp", "jump to address");
+  this.addInstruction("anl", "bitwise and");
+  this.addInstruction("cjne", "compare and jump if not equal");
+  this.addInstruction("clr", "clear bit");
+  this.addInstruction("cpl", "flip bit");
+  this.addInstruction("da", "converts to BCD notation");
+  this.addInstruction("dec", "decrement");
+  this.addInstruction("div", "divide");
+  this.addInstruction("djnz", "decrement and jump if zero");
+  this.addInstruction("inc", "increment");
+  this.addInstruction("jb", "jump if bit set");
+  this.addInstruction("jbc", "jump if bit set, clearing bit");
+  this.addInstruction("jc", "jump if carry flag is set");
+  this.addInstruction("jmp", "jump by offset");
+  this.addInstruction("jnb", "jump if bit unset");
+  this.addInstruction("jc", "jump if carry flag is unset");
+  this.addInstruction("jnz", "jump if the accumulator is not zero");
+  this.addInstruction("jz", "jump if the accumulator is zero");
+  this.addInstruction("lcall", "call subroutine at address");
+  this.addInstruction("ljmp", "jump to address");
+  this.addInstruction("mov", "move byte");
+  this.addInstruction("movc", "move byte from program memory to accumulator");
+  this.addInstruction("movx", "move byte from accumulator to program memory");
+  this.addInstruction("mul", "multiply accumulator and B register");
+  this.addInstruction("nop", "do nothing");
+  this.addInstruction("orl", "bitwise or");
+  this.addInstruction("pop", "pop byte from stack");
+  this.addInstruction("push", "push byte onto stack");
+  this.addInstruction("ret", "return from subroutine");
+  this.addInstruction("reti", "return from interrupt");
+  this.addInstruction("rl", "rotate left");
+  this.addInstruction("rlc", "rotate left with carry");
+  this.addInstruction("rr", "rotate right");
+  this.addInstruction("rlc", "rotate right with carry");
+  this.addInstruction("setb", "set bit");
+  this.addInstruction("sjmp", "jump by signed offset");
+  this.addInstruction("subb", "subtract byte value and carry flag");
+  this.addInstruction("swap", "exchange low and high nibbles");
+  this.addInstruction("xch", "exchange bytes");
+  this.addInstruction("xchd", "exchange low nibbles");
+  this.addInstruction("xrl", "bitwise xor");
 
   // rewording of the symbol table from as31
   this.addSymbol("P0",   0x80, "port zero", 8);
@@ -59,15 +59,15 @@ function Proc8051() {
   this.addSymbol("PCON",  0x87, "power control", 8);
 
   this.addSymbol("TCON",  0x88, "timer one control", 8);
-  this.addSymbol("IT0",   0x88*8+0, "interrupt zero type control bit", 1);
-  this.addSymbol("IE0",   0x88*8+1, "external interrupt zero edge flag", 1);
-  this.addSymbol("IT1",   0x88*8+2, "interrupt one type control bit", 1);
+  this.addSymbol("IT0",   0x08, "interrupt zero type control bit", 1);
+  this.addSymbol("IE0",   0x09, "external interrupt zero edge flag", 1);
+  this.addSymbol("IT1",   0x0A, "interrupt one type control bit", 1);
   // this.addSymbol("TR2",   0x88+2, "wat");
-  this.addSymbol("IE1",   0x88*8+3, "external interrupt one edge flag", 1);
-  this.addSymbol("TR0",   0x88*8+4, "timer zero run control bit", 1);
-  this.addSymbol("TF0",   0x88*8+5, "timer zero overflow flag", 1);
-  this.addSymbol("TR1",   0x88*8+6, "timer one run control bit", 1);
-  this.addSymbol("TF1",   0x88*8+7, "timer one overflow flag", 1);
+  this.addSymbol("IE1",   0x0B, "external interrupt one edge flag", 1);
+  this.addSymbol("TR0",   0x0C, "timer zero run control bit", 1);
+  this.addSymbol("TF0",   0x0D, "timer zero overflow flag", 1);
+  this.addSymbol("TR1",   0x0E, "timer one run control bit", 1);
+  this.addSymbol("TF1",   0x0F, "timer one overflow flag", 1);
 
   this.addSymbol("TMOD",  0x89, "timer mode control", 8);
   this.addSymbol("TL0",   0x8A, "timer zero low byte", 8);
@@ -78,45 +78,45 @@ function Proc8051() {
   this.addSymbol("P1",    0x90, "port one", 8);
 
   this.addSymbol("SCON", 0x98, "serial control", 8);
-  this.addSymbol("RI",   0x98*8+0, "receive interrupt flag", 1);
-  this.addSymbol("TI",   0x98*8+1, "transmit interrupt flag", 1);
-  this.addSymbol("RB8",  0x98*8+2, "ninth data bit received or stop bit", 1);
-  this.addSymbol("TB8",  0x98*8+3, "ninth bit to be transmitted", 1);
-  this.addSymbol("REN",  0x98*8+4, "reception enable", 1);
-  this.addSymbol("SM2",  0x98*8+5, "multiprocessor communication enable", 1);
-  this.addSymbol("SM1",  0x98*8+6, "serial port mode bit", 1);
-  this.addSymbol("SM0",  0x98*8+7, "serial port mode bit", 1);
+  this.addSymbol("RI",   3*8+0, "receive interrupt flag", 1);
+  this.addSymbol("TI",   3*8+1, "transmit interrupt flag", 1);
+  this.addSymbol("RB8",  3*8+2, "ninth data bit received or stop bit", 1);
+  this.addSymbol("TB8",  3*8+3, "ninth bit to be transmitted", 1);
+  this.addSymbol("REN",  3*8+4, "reception enable", 1);
+  this.addSymbol("SM2",  3*8+5, "multiprocessor communication enable", 1);
+  this.addSymbol("SM1",  3*8+6, "serial port mode bit", 1);
+  this.addSymbol("SM0",  3*8+7, "serial port mode bit", 1);
 
   this.addSymbol("SBUF", 0x99, "serial buffer", 8);
 
-  this.addSymbol("P2",    0xA0, "port two", 8);
+  this.addSymbol("P2", 0xA0, "port two", 8);
 
-  this.addSymbol("IE",    0xA8, "interrupt control register", 8);
-  this.addSymbol("EX0",   0xA8*8+0, "external interrupt zero enable", 1);
-  this.addSymbol("ET0",   0xA8*8+1, "timer zero overflow interrupt enable", 1);
-  this.addSymbol("EX1",   0xA8*8+2, "external interrupt one enable", 1);
-  this.addSymbol("ET1",   0xA8*8+3, "timer one overflow interrupt enable", 1);
-  this.addSymbol("ES",    0xA8*8+4, "serial port interrupt enable", 1);
-  this.addSymbol("ET2",   0xA8*8+5, "timer two overflow interrupt enable", 1);
-  this.addSymbol("EA",    0xA8*8+7, "interupt enable", 1);
+  this.addSymbol("IE",  0xA8, "interrupt control register", 8);
+  this.addSymbol("EX0", 5*8+0, "external interrupt zero enable", 1);
+  this.addSymbol("ET0", 5*8+1, "timer zero overflow interrupt enable", 1);
+  this.addSymbol("EX1", 5*8+2, "external interrupt one enable", 1);
+  this.addSymbol("ET1", 5*8+3, "timer one overflow interrupt enable", 1);
+  this.addSymbol("ES",  5*8+4, "serial port interrupt enable", 1);
+  this.addSymbol("ET2", 5*8+5, "timer two overflow interrupt enable", 1);
+  this.addSymbol("EA",  5*8+7, "interupt enable", 1);
 
   this.addSymbol("P3",   0xB0, "port three", 8);
-  this.addSymbol("RXD",  0xB0*8+0, "serial input port", 1);
-  this.addSymbol("TXD",  0xB0*8+1, "serial output port", 1);
-  this.addSymbol("INT0", 0xB0*8+2, "external interrupt zero input", 1);
-  this.addSymbol("INT1", 0xB0*8+3, "external interrupt one input", 1);
-  this.addSymbol("T0",   0xB0*8+4, "timer zero input", 1);
-  this.addSymbol("T1",   0xB0*8+5, "timer one input", 1);
-  this.addSymbol("WR",   0xB0*8+6, "external data write", 1);
-  this.addSymbol("RD",   0xB0*8+7, "external data read", 1);
+  this.addSymbol("RXD",  6*8+0, "serial input port", 1);
+  this.addSymbol("TXD",  6*8+1, "serial output port", 1);
+  this.addSymbol("INT0", 6*8+2, "external interrupt zero input", 1);
+  this.addSymbol("INT1", 6*8+3, "external interrupt one input", 1);
+  this.addSymbol("T0",   6*8+4, "timer zero input", 1);
+  this.addSymbol("T1",   6*8+5, "timer one input", 1);
+  this.addSymbol("WR",   6*8+6, "external data write", 1);
+  this.addSymbol("RD",   6*8+7, "external data read", 1);
 
   this.addSymbol("IP",    0xB8, "interrupt priority control", 8);
-  this.addSymbol("PX0",   0xB8*8+0, "external interrupt zero priority level", 1);
-  this.addSymbol("PT0",   0xB8*8+1, "timer zero interrupt priority level", 1);
-  this.addSymbol("PX1",   0xB8*8+2, "external interrupt one priority level", 1);
-  this.addSymbol("PT1",   0xB8*8+3, "timer one interrupt priority level", 1);
-  this.addSymbol("PS",    0xB8*8+4, "serial port interrupt priority level", 1);
-  this.addSymbol("PT2",   0xB8*8+5, "timer two interrupt priority level", 1);
+  this.addSymbol("PX0",   7*8+0, "external interrupt zero priority level", 1);
+  this.addSymbol("PT0",   7*8+1, "timer zero interrupt priority level", 1);
+  this.addSymbol("PX1",   7*8+2, "external interrupt one priority level", 1);
+  this.addSymbol("PT1",   7*8+3, "timer one interrupt priority level", 1);
+  this.addSymbol("PS",    7*8+4, "serial port interrupt priority level", 1);
+  this.addSymbol("PT2",   7*8+5, "timer two interrupt priority level", 1);
 
   // this.addSymbol("T2CON",  0xC8, "timer two control"); 8052 only
   // this.addSymbol("RCAP2L", 0xCA, "wat"); 8052 only
@@ -131,13 +131,13 @@ function Proc8051() {
 
 
   this.addSymbol("PSW",   0xD0, "program status word", 8);
-  this.addSymbol("P",     0xD0*8+0, "accumulator parity flag", 1)
-  this.addSymbol("OV",    0xD0*8+2, "overflow flag", 1);
-  this.addSymbol("RS0",   0xD0*8+3, "register bank select bit 0", 1);
-  this.addSymbol("RS1",   0xD0*8+4, "register bank select bit 1", 1);
-  this.addSymbol("F0",    0xD0*8+5, "general purpose status flag", 1);
-  this.addSymbol("AC",    0xD0*8+6, "auxilary carry flag for addition", 1);
-  this.addSymbol("CY",    0xD0*8+7, "carry flag", 1);
+  this.addSymbol("P",     10*8+0, "accumulator parity flag", 1)
+  this.addSymbol("OV",    10*8+2, "overflow flag", 1);
+  this.addSymbol("RS0",   10*8+3, "register bank select bit 0", 1);
+  this.addSymbol("RS1",   10*8+4, "register bank select bit 1", 1);
+  this.addSymbol("F0",    10*8+5, "general purpose status flag", 1);
+  this.addSymbol("AC",    10*8+6, "auxilary carry flag for addition", 1);
+  this.addSymbol("CY",    10*8+7, "carry flag", 1);
 
   this.addSymbol("ACC",   0xE0, "accumulator", 8);
 
@@ -159,23 +159,44 @@ function Proc8051() {
   this.addSymbol("+", -1, "plus", 0);
   this.addSymbol("PC", -1, "program counter", 0);
 
+  function makeEqualTest(symbol) {
+    return function(testSymbol) {
+      return testToken === symbol
+    };
+  }
 
-  var A = this.getSymbol("ACC");
-  var AT_R0 = this.getSymbol("@R0");
-  var AT_R1 = this.getSymbol("@R1");
-  var R0 = this.getSymbol("R0");
-  var R1 = this.getSymbol("R1");
-  var R2 = this.getSymbol("R2");
-  var R3 = this.getSymbol("R3");
-  var R4 = this.getSymbol("R4");
-  var R5 = this.getSymbol("R5");
-  var R6 = this.getSymbol("R6");
-  var R7 = this.getSymbol("R7");
-  var AT_A = this.getSymbol("@A");
-  var AT_DPTR = this.getSymbol("@DPTR");
-  var PLUS = this.getSymbol("+");
-  var PC = this.getSymbol("PC");
+  function makeTypeTest(type) {
+    return function(testToken) {
+      return testToken.type === type;
+    };
+  }
 
+  var A = makeEqualTest(this.getSymbol("ACC"));
+  var AT_R0 = makeEqualTest(this.getSymbol("@R0"));
+  var AT_R1 = makeEqualTest(this.getSymbol("@R1"));
+  var R0 = makeEqualTest(this.getSymbol("R0"));
+  var R1 = makeEqualTest(this.getSymbol("R1"));
+  var R2 = makeEqualTest(this.getSymbol("R2"));
+  var R3 = makeEqualTest(this.getSymbol("R3"));
+  var R4 = makeEqualTest(this.getSymbol("R4"));
+  var R5 = makeEqualTest(this.getSymbol("R5"));
+  var R6 = makeEqualTest(this.getSymbol("R6"));
+  var R7 = makeEqualTest(this.getSymbol("R7"));
+  var AT_A = makeEqualTest(this.getSymbol("@A"));
+  var AT_DPTR = makeEqualTest(this.getSymbol("@DPTR"));
+  var PLUS = makeEqualTest(this.getSymbol("+"));
+  var PC = makeEqualTest(this.getSymbol("PC"));
+
+  var CODE_ADDR = makeTypeTest(Proc.LABEL_REFERENCE);
+  var BIT_ADDR = function(testToken) {
+    return (testToken.type === Proc.SYMBOL) && (testToken.width === 1);
+  };
+
+  var DATA_ADDR = function(testToken) {
+    return (testToken.type === Proc.SYMBOL) && (testToken.width === 8);
+  };
+
+  var CONSTANT = makeTypeTest(Proc.CONSTANT);
 
   // CODE_ADDR is a label, arguably could be a constant code address to jump to
   // BIT_ADDR is an address to a bit, probably a symbol of width one or byte.Offset if byte is bit addressable
@@ -463,9 +484,259 @@ Proc8051.prototype.parseConstant = function(constant) {
   throw new Error("Could not parse constant from "+constant);
 };
 
-Proc8051.prototype.getOpcode = function(tokens) {
-  if(tokens[0].type != Proc.INSTRUCTION)
-    throw new Error("opcodes need instructions first");
-  var argc = tokens[0].argc;
-  throw new Error("not implemented");
+Proc8051.prototype.getLengthPassResults = function(text) {
+  var lines = text.split("\n");
+
+  var tokenGroups = [];
+  var errors = [];
+  var warnings = [];
+  var labelAddresses = {};
+
+  for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    var line = lines[lineIndex];
+    var tokens = line.split(this.whiteSpaceRegex);
+    var parsedTokens = tokens.map(this.getToken);
+
+    // check validity of tokens. If one of them is legit invalid, report it
+    for(var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++) {
+      var token = tokens[tokenIndex];
+      var parsedToken = tokens[tokenIndex];
+      if(parsedToken.type !== Proc.INVALID) {
+        continue;
+      }
+
+      if(token.length !== 0) {
+        errors.push({line: line, text: "Invalid token \""+token+"\""});
+        errorInLine = true;
+        break;
+      }
+    }
+
+    if(errorInLine) continue;
+
+    parsedTokens = parsedTokens.filter(function(t) {
+      return t.type !== Proc.INVALID;
+    });
+
+    tokenGroups.push(parsedTokens);
+
+    // handle a .org specifier by setting the current program offset
+    if(tokens[0].type === Proc.ORGANIZATION) {
+      if(tokens[1].type === Proc.CONSTANT) {
+        byteAddr = tokens[1].value;
+        if(tokens.length > 2) {
+          warnings.push({line: lineIndex, text: "Junk after organization specifier"});
+        }
+      } else {
+        errors.push({line: lineIndex, text: "Organization specifiers need constant addresses"});
+      }
+      continue;
+    }
+    // add a new label at the current location
+    if(tokens[0].type === Proc.LABEL_DECLARATION) {
+      labelAddresses[tokens[0].name] = byteAddr;
+      if(tokens.length > 1) {
+        results.warnings.push({line: lineIndex, text: "Junk after label"});
+      }
+    }
+
+    // constants can't start lines
+    if(tokens[0].type === Proc.CONSTANT) {
+      results.errors.push({line: lineIndex, text: "Lines may not start with constants"});
+      continue;
+    }
+
+    // symbols can't start lines
+    if(tokens[0].type === Proc.SYMBOL) {
+      results.errors.push({line: lineIndex, text: "Lines may not start with symbols"});
+      continue;
+    }
+
+    // get the opcode of the current instruction
+    var opcode = this.getOpcode(tokens);
+    if(!opcode) {
+      results.errors.push({line: lineIndex, text: "No opcode found"});
+      continue;
+    }
+
+    byteAddr += opcode.length;
+  }
+
+  return {
+    tokenGroups: tokenGroups,
+    labelAddresses: labelAddresses,
+    errors: errors,
+    warnings: warnings
+  }
+}
+
+Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses) {
+  var byteAddr = 0;
+  var programBytes = new Uint8Array(64*1024); //about 64k of memory, whatever
+
+  for(var lineIndex = 0; lineIndex < tokenGroups.length; lineIndex++) {
+    var tokens = tokenGroups[lineIndex];
+    if(tokens[0].type !== Proc.INSTRUCTION) {
+      // skip label declarations and other junk
+      continue;
+    }
+
+    var opcode = getOpcode(tokens);
+    if(!opcode) {
+      errors.push("Could not find valid opcode for "+tokens[0].name);
+      break;
+    }
+
+    var opcodeIndex = this.opcodes.indexOf(opcode); // TODO slow
+    if(opcodeIndex < 0 || opcodeIndex > 255) {
+      errors.push("Could not find valid opcode for "+tokens[0].name);
+      break;
+    }
+
+    programBytes[byteAddr] = opcodeIndex;
+
+    var tokenOffset = tokens.length - 1;
+    for(var byteOffset = opcode.length - 1; byteOffset > 0; byteOffset--) {
+      var tokenOffset = byteOffset - opcode.length + tokens.length;
+      var token = tokens[tokenOffset];
+      if(token.type === Proc.LABEL_REFERENCE) {
+        // must distinguish between absolute and relative addressing
+        var targetAddr = labelAddresses[token.name];
+        switch(opcode.name) {
+        case "ljmp":
+        case "lcall":
+          // absolute (addr16)
+          programBytes[byteAddr+byteOffset] = targetAddr & 0xff;
+          byteOffset -= 1;
+          programBytes[byteAddr+byteOffset] = (targetAddr & 0xff00) >> 8;
+          break;
+        case "sjmp":
+        case "jz":
+        case "jnz":
+        case "cjne":
+        case "djnz":
+          var offset = targetAddr - byteAddr - opcode.length;
+          if(offset > 127 || offset < -128) {
+            errors.push("Relative jump offset out of range");
+          }
+          programBytes[byteAddr+byteOffset] = offset;
+          // relative addring
+          break;
+        case "ajmp":
+        case "acall":
+          // absolute (addr11)
+          // first three bits are packed in instruction
+          if(targetAddr > 0x3ff) {
+            errors.push("Absolute call address out of range");
+          }
+          var firstThree = ((targetAddr >> 8)&0x7);
+          programBytes[byteAddr] &= 0x1f;
+          programBytes[byteAddr] |= firstThree << 5;
+          programBytes[byteAddr+byteOffset] = targetAddr & 0xff;
+          break;
+        }
+
+      } else {
+        programBytes[byteAddr+byteOffset] = getByteRepresentation(token);
+      }
+    }
+
+    byteAddr += opcode.length;
+  }
+
+  console.log("assembled: "+byteAddr+" bytes");
+
+  return {errors: errors, warnings: warnings, programBytes: programBytes};
 };
+
+Proc8051.prototype.getOpcode = function(tokens) {
+  if(tokens[0].type !== Proc.INSTRUCTION)
+    throw new Error("opcodes need instructions first");
+
+  // opcodes are grouped by instruction name
+  var instrName = tokens[0].name;
+
+  var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
+
+  for(var i = 0, len = possibleInstrs,length; i < len; i++) {
+    if(possibleInstr.args.length !== tokens.length - 1) {
+      continue;
+    }
+
+    foundInstr = true;
+    // argTest is a test of whether an argument fits for the given instruction
+    for(var argIndex = 0; argIndex < possibleInstr.args.length; argIndex++) {
+      var argTest = possibleInstr.args[argIndex];
+      var argActual = tokens[argIndex+1];
+
+      if(!argTest(argActual)) {
+        foundInstr = false;
+        break;
+      }
+    }
+    if(foundInstr) {
+      return possibleInstr;
+    }
+  }
+
+  return null;
+};
+
+function getByteRepresentation = function(token) {
+  var warnings = [];
+  var errors = [];
+
+  if(token.type === Proc.CONSTANT) {
+    if(token.value > 255 || token < 0) {
+      warnings.push("Clamped constant byte value");
+      token = (token+256)%256;
+    }
+    return {errors: errors, warnings: warnings, value: token.value};
+  }
+
+  if(token.type === Proc.SYMBOL) {
+    if(token.address < 0) {
+      errors.push("Symbol \""+token.name+"\" is not addressable");
+    }
+    return {errors: errors, warnings: warnings, value: token.address};
+  }
+
+  errors.push("Can not convert "+token.name+" (type "+token.type+") to byte");
+  return {errors: errors, warnings: warnings, value: -1};
+};
+
+
+Proc8051.prototype.generateAssembly = function(text) {
+  var lengthPassResults = getLengthPassResults(text);
+  var tokenGroups = lengthPassResults.tokenGroups;
+  var labelAddresses = lengthPassResults.labelAddresses,
+  var warnings = lengthPassResults.warnings;
+  var errors = lengthPassResults.errors;
+
+  if(errors.length > 0) {
+    return {
+      hex: null,
+      errors: errors,
+      warnings: warnings
+    };
+  }
+
+  var generatePassResults = getGeneratePassResults(tokenGroups, labelAddresses);
+  warnings = warnings.concat(generatePassResults.warnings);
+  errors = errors.concat(generatePassResults.errors);
+
+  if(errors.length > 0) {
+    return {
+      hex: null,
+      errors: errors,
+      warnings: warnings
+    };
+  }
+
+  var encodeResults = getEncodeResults(generatePassResults.programBytes);
+  warnings = warnings.concat(encodeResults.warnings);
+  errors = errors.concat(encodeResults.errors);
+
+  return encodeResults;
+}
+
