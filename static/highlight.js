@@ -26,7 +26,7 @@ function typeFromClass(cls) {
   throw new Error(cls+" is not a class");
 }
 
-function invisibleKeyEvent(evt) {
+function isInvisibleKeyEvent(evt) {
   if(evt.key === "Left") return true;
   if(evt.key === "Right") return true;
   if(evt.key === "Up") return true;
@@ -40,6 +40,14 @@ function invisibleKeyEvent(evt) {
   return false;
 }
 
+function isTabKey(evt) {
+  return evt.key === "Tab" || evt.keyCode === 0x09;
+}
+
+function handleTabKey(evt) {
+  console.log("pls implement tab kthx");
+  evt.preventDefault();
+}
 
 
 function updateTextArea(evt) {
@@ -48,7 +56,12 @@ function updateTextArea(evt) {
     return;
   }
 
-  if(invisibleKeyEvent(evt)) {
+  if(isInvisibleKeyEvent(evt)) {
+    return;
+  }
+
+  if(isTabKey(evt)) {
+    handleTabKey(evt);
     return;
   }
 
