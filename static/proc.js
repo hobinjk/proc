@@ -1,6 +1,7 @@
 function Proc() {
   this.instructions = [];
   this.symbols = [];
+  this.labelDeclarations = [];
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
   this.whiteSpaceRegex = /([ ,\xa0]+|\n)/g
@@ -8,16 +9,23 @@ function Proc() {
 
 Proc.INVALID = -1;
 Proc.INSTRUCTION = 0;
-Proc.LABEL = 1;
-Proc.CONSTANT = 2;
-Proc.SYMBOL = 3;
+Proc.LABEL_DECLARATION = 1;
+Proc.LABEL = 2;
+Proc.CONSTANT = 3;
+Proc.SYMBOL = 4;
+Proc.ORGANIZATION = 5;
 
-Proc.prototype.addInstruction = function(name, argc, description) {
-  this.instructions.push({name: name.toLowerCase(), argc: argc, description: description, type: Proc.INSTRUCTION});
+Proc.prototype.addInstruction = function(name, description) {
+  this.instructions.push({name: name.toLowerCase(), description: description, type: Proc.INSTRUCTION});
 }
 
 Proc.prototype.addSymbol = function(name, address, description, width) {
   this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL, width: width});
+}
+
+Proc.prototype.addLabelDeclaration = function(name) {
+  if(this.getLabelDeclarationByName(name)) return;
+  this.labelDeclarations.push({name: name.toLowerCase(), type: Proc.LABEL_DECLARATION});
 }
 
 Proc.prototype.getInstructionByName = function(name) {
@@ -38,14 +46,36 @@ Proc.prototype.getDescription = function(name) {
   return "there is no help for you here";
 };
 
-Proc.prototype.isLabel = function(token) {
+Proc.prototype.getLabelDeclarationByName = function(name) {
+  for(var i = 0, len = this.labelDeclarations.length; i < len; i++) {
+    var labelDecl = this.labelDeclarations[i];
+    if(labelDecl.name === token)
+      return labelDecl;
+  }
+  return null;
+};
+
+Proc.prototype.isLabelDeclaration = function(token) {
   return this.loopRegex.test(token);
 };
 
-Proc.prototype.getLabel = function(token) {
+Proc.prototype.getLabelReference = function(token) {
+  var labelDecl = getLabelDeclarationByName(token);
+  if(labelDecl) {
+    return {name: labelDecl.name, type: Proc.LABEL_REFERENCE};
+  }
+  return null;
+}
+
+Proc.prototype.getLabelDeclaration = function(token) {
   var matches = token.match(this.loopRegex);
   if(matches.length < 2) throw new Error("Token \""+token+"\" has no label");
-  return {label: matches[1], type: Proc.LABEL};
+  var name = matches[1];
+  var currentDecl = getLabelDeclarationByName(name);
+  if(currentDecl) return currentDecl;
+  console.log("warning: creating new label for \""+name+"\"");
+  this.addLabelDeclaration(name);
+  return getLabelDeclarationByName(name);
 };
 
 Proc.prototype.isConstant = function(token) {
@@ -84,9 +114,12 @@ Proc.prototype.getToken = function(token) {
   var instr = this.getInstructionByName(token);
   if(instr) return instr;
 
-  if(this.isLabel(token)) {
-    return this.getLabel(token);
+  if(this.isLabelDeclaration(token)) {
+    return this.getLabelDeclaration(token);
   }
+
+  var labelRef = this.getLabelReference(token);
+  if(labelRef) return labelRef;
 
   if(this.isConstant(token)) {
     return this.getConstant(token);

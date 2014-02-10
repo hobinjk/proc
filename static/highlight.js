@@ -11,7 +11,8 @@ var classType = {};
 classType[Proc.INSTRUCTION] = "ins";
 classType[Proc.SYMBOL] = "sym";
 classType[Proc.CONSTANT] = "con";
-classType[Proc.LABEL] = "lbl";
+classType[Proc.LABEL_DECLARATION] = "lbl";
+classType[Proc.LABEL_REFERENCE] = "lbl";
 classType[Proc.INVALID] = "";
 
 function classFromType(type) {
