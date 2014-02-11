@@ -5,6 +5,7 @@ function Proc() {
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
   this.whiteSpaceRegex = /([ ,\xa0]+|\n)/;
+  this.organizationSpecifier = ".org";
 }
 
 Proc.INVALID = -1;
@@ -110,6 +111,14 @@ Proc.prototype.getSymbolAddress = function(token) {
   return this.getSymbol(token).address;
 };
 
+Proc.prototype.isOrganization = function(token) {
+  return token === this.organizationSpecifier;
+}
+
+Proc.prototype.getOrganization = function(token) {
+  return {type: Proc.ORGANIZATION};
+};
+
 Proc.prototype.getToken = function(token) {
   var instr = this.getInstructionByName(token);
   if(instr) return instr;
@@ -127,6 +136,10 @@ Proc.prototype.getToken = function(token) {
 
   if(this.isSymbol(token)) {
     return this.getSymbol(token); // "symbol" like P1 or DPTR
+  }
+
+  if(this.isOrganization(token)) {
+    return this.getOrganization(token);
   }
 
   return {type: Proc.INVALID};
