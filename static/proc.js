@@ -4,7 +4,7 @@ function Proc() {
   this.labelDeclarations = [];
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
-  this.whiteSpaceRegex = /([ ,\xa0]+|\n)/g
+  this.whiteSpaceRegex = /([ ,\xa0\x20]+|\n|\s+)/
 }
 
 Proc.INVALID = -1;
@@ -60,7 +60,7 @@ Proc.prototype.isLabelDeclaration = function(token) {
 };
 
 Proc.prototype.getLabelReference = function(token) {
-  var labelDecl = getLabelDeclarationByName(token);
+  var labelDecl = this.getLabelDeclarationByName(token);
   if(labelDecl) {
     return {name: labelDecl.name, type: Proc.LABEL_REFERENCE};
   }
@@ -71,11 +71,11 @@ Proc.prototype.getLabelDeclaration = function(token) {
   var matches = token.match(this.loopRegex);
   if(matches.length < 2) throw new Error("Token \""+token+"\" has no label");
   var name = matches[1];
-  var currentDecl = getLabelDeclarationByName(name);
+  var currentDecl = this.getLabelDeclarationByName(name);
   if(currentDecl) return currentDecl;
   console.log("warning: creating new label for \""+name+"\"");
   this.addLabelDeclaration(name);
-  return getLabelDeclarationByName(name);
+  return this.getLabelDeclarationByName(name);
 };
 
 Proc.prototype.isConstant = function(token) {

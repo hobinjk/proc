@@ -158,10 +158,11 @@ function Proc8051() {
   this.addSymbol("@A", -1, "value pointed to by register A", 8);
   this.addSymbol("+", -1, "plus", 0);
   this.addSymbol("PC", -1, "program counter", 0);
+  this.addSymbol("AB", -1, "A op B", 0);
 
   function makeEqualTest(symbol) {
-    return function(testSymbol) {
-      return testToken === symbol
+    return function(testToken) {
+      return testToken === symbol;
     };
   }
 
@@ -172,6 +173,8 @@ function Proc8051() {
   }
 
   var A = makeEqualTest(this.getSymbol("ACC"));
+  var AB = makeEqualTest(this.getSymbol("AB"));
+  var C = makeEqualTest(this.getSymbol("C"));
   var AT_R0 = makeEqualTest(this.getSymbol("@R0"));
   var AT_R1 = makeEqualTest(this.getSymbol("@R1"));
   var R0 = makeEqualTest(this.getSymbol("R0"));
@@ -184,6 +187,7 @@ function Proc8051() {
   var R7 = makeEqualTest(this.getSymbol("R7"));
   var AT_A = makeEqualTest(this.getSymbol("@A"));
   var AT_DPTR = makeEqualTest(this.getSymbol("@DPTR"));
+  var DPTR = makeEqualTest(this.getSymbol("DPTR"));
   var PLUS = makeEqualTest(this.getSymbol("+"));
   var PC = makeEqualTest(this.getSymbol("PC"));
 
@@ -197,6 +201,7 @@ function Proc8051() {
   };
 
   var CONSTANT = makeTypeTest(Proc.CONSTANT);
+
 
   // CODE_ADDR is a label, arguably could be a constant code address to jump to
   // BIT_ADDR is an address to a bit, probably a symbol of width one or byte.Offset if byte is bit addressable
@@ -259,7 +264,7 @@ function Proc8051() {
     {name: "addc", args: [A, CONSTANT], length: 2},
     {name: "addc", args: [A, DATA_ADDR], length: 2},
     {name: "addc", args: [A, AT_R0], length: 1},
-    {name: "addc", args: [A, AT_r1], length: 1},
+    {name: "addc", args: [A, AT_R1], length: 1},
     {name: "addc", args: [A, R0], length: 1},
     {name: "addc", args: [A, R1], length: 1},
     {name: "addc", args: [A, R2], length: 1},
@@ -302,10 +307,10 @@ function Proc8051() {
     {name: "anl", args: [A, R7], length: 1},
     {name: "jz", args: [CODE_ADDR], length: 2},
     {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "xrl", args: [DATA_ADDR, A], length: 2}
-    {name: "xrl", args: [DATA_ADDR, CONSTANT], length: 3}
-    {name: "xrl", args: [A, CONSTANT], length: 2}
-    {name: "xrl", args: [A, DATA_ADDR], length: 2}
+    {name: "xrl", args: [DATA_ADDR, A], length: 2},
+    {name: "xrl", args: [DATA_ADDR, CONSTANT], length: 3},
+    {name: "xrl", args: [A, CONSTANT], length: 2},
+    {name: "xrl", args: [A, DATA_ADDR], length: 2},
     {name: "xrl", args: [A, AT_R0], length: 1},
     {name: "xrl", args: [A, AT_R1], length: 1},
     {name: "xrl", args: [A, R0], length: 1},
@@ -364,7 +369,7 @@ function Proc8051() {
     {name: "subb", args: [A, R5], length: 1},
     {name: "subb", args: [A, R6], length: 1},
     {name: "subb", args: [A, R7], length: 1},
-    {name: "orl", args: [A, NOT_BIT_ADDR], length: 2},
+    {name: "reserved orl", args: [A, null /*NOT_BIT_ADDR*/], length: 2},
     {name: "ajmp", args: [CODE_ADDR], length: 2},
     {name: "mov", args: [C, BIT_ADDR], length: 2},
     {name: "inc", args: [DPTR], length: 1},
@@ -380,7 +385,7 @@ function Proc8051() {
     {name: "mov", args: [R5, DATA_ADDR], length: 2},
     {name: "mov", args: [R6, DATA_ADDR], length: 2},
     {name: "mov", args: [R7, DATA_ADDR], length: 2},
-    {name: "anl", args: [C, NOT_BIT_ADDR], length: 2},
+    {name: "reserved anl", args: [C, null /*NOT_BIT_ADDR*/], length: 2},
     {name: "acall", args: [CODE_ADDR], length: 2},
     {name: "cpl", args: [BIT_ADDR], length: 2},
     {name: "cpl", args: [C], length: 1},
@@ -462,6 +467,10 @@ function Proc8051() {
     {name: "mov", args: [R7, A], length: 1}
   ];
 
+  for(var i = 0; i < this.opcodes.length; i++) {
+    this.opcodes[i].opcode = i;
+  }
+
 
 }
 
@@ -491,34 +500,42 @@ Proc8051.prototype.getLengthPassResults = function(text) {
   var errors = [];
   var warnings = [];
   var labelAddresses = {};
+  var byteAddr = 0;
 
   for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     var line = lines[lineIndex];
-    var tokens = line.split(this.whiteSpaceRegex);
-    var parsedTokens = tokens.map(this.getToken);
+    var strTokens = line.split(this.whiteSpaceRegex);
+    var tokens = strTokens.map(this.getToken.bind(this));
+    console.log("toks: "+tokens.toSource());
+    console.log("strtoks: "+strTokens.toSource());
 
     // check validity of tokens. If one of them is legit invalid, report it
+    var errorInLine = false;
+    var tokensInLine = false;
     for(var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++) {
+      var strToken = strTokens[tokenIndex];
       var token = tokens[tokenIndex];
-      var parsedToken = tokens[tokenIndex];
-      if(parsedToken.type !== Proc.INVALID) {
+      if(token.type !== Proc.INVALID) {
+        tokensInLine = true;
         continue;
       }
 
-      if(token.length !== 0) {
-        errors.push({line: line, text: "Invalid token \""+token+"\""});
+      if(!this.whiteSpaceRegex.test(strToken)) {
+        console.log(this.whiteSpaceRegex);
+        console.log(strToken);
+        errors.push({line: lineIndex, text: "Invalid token \""+strToken+"\""});
         errorInLine = true;
         break;
       }
     }
 
-    if(errorInLine) continue;
+    if(errorInLine || !tokensInLine) continue;
 
-    parsedTokens = parsedTokens.filter(function(t) {
+    tokens = tokens.filter(function(t) {
       return t.type !== Proc.INVALID;
     });
 
-    tokenGroups.push(parsedTokens);
+    tokenGroups.push(tokens);
 
     // handle a .org specifier by setting the current program offset
     if(tokens[0].type === Proc.ORGANIZATION) {
@@ -548,14 +565,14 @@ Proc8051.prototype.getLengthPassResults = function(text) {
 
     // symbols can't start lines
     if(tokens[0].type === Proc.SYMBOL) {
-      results.errors.push({line: lineIndex, text: "Lines may not start with symbols"});
+      errors.push({line: lineIndex, text: "Lines may not start with symbols"});
       continue;
     }
 
     // get the opcode of the current instruction
     var opcode = this.getOpcode(tokens);
     if(!opcode) {
-      results.errors.push({line: lineIndex, text: "No opcode found"});
+      errors.push({line: lineIndex, text: "No opcode found"});
       continue;
     }
 
@@ -573,6 +590,8 @@ Proc8051.prototype.getLengthPassResults = function(text) {
 Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses) {
   var byteAddr = 0;
   var programBytes = new Uint8Array(64*1024); //about 64k of memory, whatever
+  var errors = [];
+  var warnings = [];
 
   for(var lineIndex = 0; lineIndex < tokenGroups.length; lineIndex++) {
     var tokens = tokenGroups[lineIndex];
@@ -581,19 +600,13 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
       continue;
     }
 
-    var opcode = getOpcode(tokens);
+    var opcode = this.getOpcode(tokens);
     if(!opcode) {
       errors.push("Could not find valid opcode for "+tokens[0].name);
       break;
     }
 
-    var opcodeIndex = this.opcodes.indexOf(opcode); // TODO slow
-    if(opcodeIndex < 0 || opcodeIndex > 255) {
-      errors.push("Could not find valid opcode for "+tokens[0].name);
-      break;
-    }
-
-    programBytes[byteAddr] = opcodeIndex;
+    programBytes[byteAddr] = opcode.opcode;
 
     var tokenOffset = tokens.length - 1;
     for(var byteOffset = opcode.length - 1; byteOffset > 0; byteOffset--) {
@@ -637,7 +650,10 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
         }
 
       } else {
-        programBytes[byteAddr+byteOffset] = getByteRepresentation(token);
+        var byteRepResults = this.getByteRepresentation(token);
+        errors = errors.concat(byteRepResults.errors);
+        warnings = warnings.concat(byteRepResults.warnings);
+        programBytes[byteAddr+byteOffset] = byteRepResults.value;
       }
     }
 
@@ -657,8 +673,10 @@ Proc8051.prototype.getOpcode = function(tokens) {
   var instrName = tokens[0].name;
 
   var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
+  console.log(possibleInstrs.length +" possible instructions");
 
-  for(var i = 0, len = possibleInstrs,length; i < len; i++) {
+  for(var i = 0, len = possibleInstrs.length; i < len; i++) {
+    var possibleInstr = possibleInstrs[i];
     if(possibleInstr.args.length !== tokens.length - 1) {
       continue;
     }
@@ -682,7 +700,7 @@ Proc8051.prototype.getOpcode = function(tokens) {
   return null;
 };
 
-function getByteRepresentation = function(token) {
+Proc8051.prototype.getByteRepresentation = function(token) {
   var warnings = [];
   var errors = [];
 
@@ -707,9 +725,9 @@ function getByteRepresentation = function(token) {
 
 
 Proc8051.prototype.generateAssembly = function(text) {
-  var lengthPassResults = getLengthPassResults(text);
+  var lengthPassResults = this.getLengthPassResults(text);
   var tokenGroups = lengthPassResults.tokenGroups;
-  var labelAddresses = lengthPassResults.labelAddresses,
+  var labelAddresses = lengthPassResults.labelAddresses;
   var warnings = lengthPassResults.warnings;
   var errors = lengthPassResults.errors;
 
@@ -721,7 +739,7 @@ Proc8051.prototype.generateAssembly = function(text) {
     };
   }
 
-  var generatePassResults = getGeneratePassResults(tokenGroups, labelAddresses);
+  var generatePassResults = this.getGeneratePassResults(tokenGroups, labelAddresses);
   warnings = warnings.concat(generatePassResults.warnings);
   errors = errors.concat(generatePassResults.errors);
 
@@ -733,10 +751,12 @@ Proc8051.prototype.generateAssembly = function(text) {
     };
   }
 
-  var encodeResults = getEncodeResults(generatePassResults.programBytes);
-  warnings = warnings.concat(encodeResults.warnings);
-  errors = errors.concat(encodeResults.errors);
+  var encodeResults = new Encoder().encode(generatePassResults.programBytes);
 
-  return encodeResults;
+  return {
+    hex: encodeResults,
+    warnings: warnings,
+    errors: errors
+  };
 }
 
