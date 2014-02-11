@@ -131,7 +131,7 @@ function Proc8051() {
 
 
   this.addSymbol("PSW",   0xD0, "program status word", 8);
-  this.addSymbol("P",     10*8+0, "accumulator parity flag", 1)
+  this.addSymbol("P",     10*8+0, "accumulator parity flag", 1);
   this.addSymbol("OV",    10*8+2, "overflow flag", 1);
   this.addSymbol("RS0",   10*8+3, "register bank select bit 0", 1);
   this.addSymbol("RS1",   10*8+4, "register bank select bit 1", 1);
@@ -487,6 +487,7 @@ Proc8051.prototype.parseConstant = function(constant) {
     case "o":
       return parseInt(rawConstant, 8);
     case "d":
+      return parseInt(rawConstant, 10);
     default:
       return parseInt(rawConstant, 10);
   }
@@ -580,8 +581,8 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     labelAddresses: labelAddresses,
     errors: errors,
     warnings: warnings
-  }
-}
+  };
+};
 
 Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses) {
   var byteAddr = 0;
@@ -612,7 +613,6 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
       tokens[1] = tmp;
     }
 
-    var tokenOffset = tokens.length - 1;
     for(var byteOffset = opcode.length - 1; byteOffset > 0; byteOffset--) {
       var tokenOffset = byteOffset - opcode.length + tokens.length;
       var token = tokens[tokenOffset];
@@ -761,5 +761,5 @@ Proc8051.prototype.generateAssembly = function(text) {
     warnings: warnings,
     errors: errors
   };
-}
+};
 
