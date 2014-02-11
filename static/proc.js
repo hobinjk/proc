@@ -4,7 +4,7 @@ function Proc() {
   this.labelDeclarations = [];
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
-  this.whiteSpaceRegex = /([ ,\xa0\x20]+|\n|\s+)/
+  this.whiteSpaceRegex = /([ ,\xa0]+|\n)/;
 }
 
 Proc.INVALID = -1;
