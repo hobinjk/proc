@@ -506,8 +506,6 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     var line = lines[lineIndex];
     var strTokens = line.split(this.whiteSpaceRegex);
     var tokens = strTokens.map(this.getToken.bind(this));
-    console.log("toks: "+tokens.toSource());
-    console.log("strtoks: "+strTokens.toSource());
 
     // check validity of tokens. If one of them is legit invalid, report it
     var errorInLine = false;
@@ -521,8 +519,6 @@ Proc8051.prototype.getLengthPassResults = function(text) {
       }
 
       if(!this.whiteSpaceRegex.test(strToken)) {
-        console.log(this.whiteSpaceRegex);
-        console.log(strToken);
         errors.push({line: lineIndex, text: "Invalid token \""+strToken+"\""});
         errorInLine = true;
         break;
@@ -673,7 +669,6 @@ Proc8051.prototype.getOpcode = function(tokens) {
   var instrName = tokens[0].name;
 
   var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
-  console.log(possibleInstrs.length +" possible instructions");
 
   for(var i = 0, len = possibleInstrs.length; i < len; i++) {
     var possibleInstr = possibleInstrs[i];
