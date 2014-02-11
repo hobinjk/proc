@@ -518,7 +518,7 @@ Proc8051.prototype.getLengthPassResults = function(text) {
         continue;
       }
 
-      if(!this.whiteSpaceRegex.test(strToken)) {
+      if((!this.whiteSpaceRegex.test(strToken)) && (strToken.length > 0)) {
         errors.push({line: lineIndex, text: "Invalid token \""+strToken+"\""});
         errorInLine = true;
         break;
