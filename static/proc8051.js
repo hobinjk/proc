@@ -604,6 +604,14 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
 
     programBytes[byteAddr] = opcode.opcode;
 
+    // special case for mov data_addr, data_addr because its source and dest are swapped memory-wise
+    if(opcode.opcode === 0x85) {
+      // swap src and dst
+      var tmp = tokens[2];
+      tokens[2] = tokens[1];
+      tokens[1] = tmp;
+    }
+
     var tokenOffset = tokens.length - 1;
     for(var byteOffset = opcode.length - 1; byteOffset > 0; byteOffset--) {
       var tokenOffset = byteOffset - opcode.length + tokens.length;
