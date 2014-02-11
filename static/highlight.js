@@ -13,6 +13,7 @@ classType[Proc.SYMBOL] = "sym";
 classType[Proc.CONSTANT] = "con";
 classType[Proc.LABEL_DECLARATION] = "lbl";
 classType[Proc.LABEL_REFERENCE] = "lbl";
+classType[Proc.ORGANIZATION] = "org";
 classType[Proc.INVALID] = "";
 
 function classFromType(type) {
@@ -186,10 +187,15 @@ function loadCurrentFile() {
   request.send();
 }
 
-function saveCurrentFile() {
+function getEditorText() {
   var text = editor.innerHTML;
   text = text.replace(/<br\/?>/g, "\n");
   text = text.replace(/<[^>]+>/g, "");
+  return text;
+}
+
+function saveCurrentFile() {
+  var text = getEditorText();
 
   var data = new FormData();
   data.append("text", text);
