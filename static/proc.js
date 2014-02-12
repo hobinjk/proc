@@ -6,6 +6,7 @@ function Proc() {
   this.docUrl = "http://google.com/#q=%s";
   this.whiteSpaceRegex = /([ ,\xa0]+|\n)/;
   this.organizationSpecifier = ".org";
+  this.commentStart = ";";
 }
 
 Proc.INVALID = -1;
@@ -15,6 +16,7 @@ Proc.LABEL = 2;
 Proc.CONSTANT = 3;
 Proc.SYMBOL = 4;
 Proc.ORGANIZATION = 5;
+Proc.COMMENT = 6;
 
 Proc.prototype.addInstruction = function(name, description) {
   this.instructions.push({name: name.toLowerCase(), description: description, type: Proc.INSTRUCTION});
@@ -145,3 +147,22 @@ Proc.prototype.getToken = function(token) {
   return {type: Proc.INVALID};
 };
 
+Proc.prototype.getTokens = function(line) {
+  var commentSplit = line.split(this.commentStart);
+  var statement = commentSplit[0];
+  var commentString = "";
+
+  if(commentSplit.length > 1) {
+    // comments can contain comment start, must limit
+    commentString = this.commentStart+commentSplit.slice(1).join(this.commentStart);
+  }
+  var statementParts = statement.split(this.whiteSpaceRegex);
+  var self = this;
+  var tokens = statementParts.map(function(part) {
+    return self.getToken(part);
+  });
+  if(commentString.length > 0) {
+    tokens.push(this.getComment(commentString));
+  }
+  return tokens;
+};

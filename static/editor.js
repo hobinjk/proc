@@ -17,6 +17,7 @@ function Editor() {
   this.classType[Proc.LABEL_DECLARATION] = "lbl";
   this.classType[Proc.LABEL_REFERENCE] = "lbl";
   this.classType[Proc.ORGANIZATION] = "org";
+  this.classType[Proc.COMMENT] = "cmt";
   this.classType[Proc.INVALID] = "";
 
   this.editor.addEventListener("input", this.updateTextArea.bind(this), false);
