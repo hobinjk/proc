@@ -18,16 +18,16 @@ Proc.ORGANIZATION = 5;
 
 Proc.prototype.addInstruction = function(name, description) {
   this.instructions.push({name: name.toLowerCase(), description: description, type: Proc.INSTRUCTION});
-}
+};
 
 Proc.prototype.addSymbol = function(name, address, description, width) {
   this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL, width: width});
-}
+};
 
 Proc.prototype.addLabelDeclaration = function(name) {
   if(this.getLabelDeclarationByName(name)) return;
   this.labelDeclarations.push({name: name.toLowerCase(), type: Proc.LABEL_DECLARATION});
-}
+};
 
 Proc.prototype.getInstructionByName = function(name) {
   var lname = name.toLowerCase();
@@ -66,7 +66,7 @@ Proc.prototype.getLabelReference = function(token) {
     return {name: labelDecl.name, type: Proc.LABEL_REFERENCE};
   }
   return null;
-}
+};
 
 Proc.prototype.getLabelDeclaration = function(token) {
   var matches = token.match(this.loopRegex);
@@ -94,7 +94,7 @@ Proc.prototype.parseConstant = function(constant) {
 };
 
 Proc.prototype.isSymbol = function(token) {
-  return this.getSymbol(token) != null;
+  return this.getSymbol(token) !== null;
 };
 
 Proc.prototype.getSymbol = function(token) {
@@ -113,7 +113,7 @@ Proc.prototype.getSymbolAddress = function(token) {
 
 Proc.prototype.isOrganization = function(token) {
   return token === this.organizationSpecifier;
-}
+};
 
 Proc.prototype.getOrganization = function(token) {
   return {type: Proc.ORGANIZATION};
