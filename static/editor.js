@@ -270,7 +270,8 @@ Editor.prototype.loadCurrentFile = function() {
   var request = new XMLHttpRequest();
   var self = this;
   request.onload = function() {
-    self.setText(this.responseText, false);
+    var response = this.responseText.replace(/\r/g, "");
+    self.setText(response, false);
     self.enabled = true;
   };
   request.open("get", loc, true);
