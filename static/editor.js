@@ -57,7 +57,7 @@ Editor.prototype.isInvisibleKeyEvent = function(evt) {
 };
 
 Editor.prototype.isTabKey = function(evt) {
-  return evt.key === "Tab" || evt.keyCode === 0x09;
+  return (evt.key === "Tab" || evt.keyCode === 0x09) && !(evt.ctrlKey || evt.altKey || evt.shiftKey || evt.metaKey);
 };
 
 Editor.prototype.handleTabKey = function(evt) {
