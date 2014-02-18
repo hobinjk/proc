@@ -4,7 +4,7 @@ function Proc() {
   this.labelDeclarations = [];
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
-  this.whiteSpaceRegex = /([ ,\xa0]+|\n)/;
+  this.whiteSpaceRegex = /([ ,]+|\n)/;
   this.organizationSpecifier = ".org";
   this.commentStart = ";";
 }
@@ -121,6 +121,10 @@ Proc.prototype.getOrganization = function(token) {
   return {type: Proc.ORGANIZATION};
 };
 
+Proc.prototype.getComment = function(token) {
+  return {type: Proc.COMMENT};
+};
+
 Proc.prototype.getToken = function(token) {
   var instr = this.getInstructionByName(token);
   if(instr) return instr;
@@ -147,7 +151,7 @@ Proc.prototype.getToken = function(token) {
   return {type: Proc.INVALID};
 };
 
-Proc.prototype.getTokens = function(line) {
+Proc.prototype.getTokenPairs = function(line) {
   var commentSplit = line.split(this.commentStart);
   var statement = commentSplit[0];
   var commentString = "";
@@ -159,10 +163,10 @@ Proc.prototype.getTokens = function(line) {
   var statementParts = statement.split(this.whiteSpaceRegex);
   var self = this;
   var tokens = statementParts.map(function(part) {
-    return self.getToken(part);
+    return {text: part, token: self.getToken(part)};
   });
   if(commentString.length > 0) {
-    tokens.push(this.getComment(commentString));
+    tokens.push({text: commentString, token: this.getComment(commentString)});
   }
   return tokens;
 };
