@@ -5,7 +5,6 @@
 function Editor() {
   this.proc = new Proc8051();
   this.editor = document.getElementById("editor");
-  this.saveButton = document.getElementById("save");
 
   this.operationQueue = [];
   this.enabled = false;
@@ -22,7 +21,6 @@ function Editor() {
 
   this.editor.addEventListener("input", this.handleInput.bind(this), false);
   this.editor.addEventListener("keydown", this.handleKeyDown.bind(this), false);
-  this.saveButton.addEventListener("click", this.saveCurrentFile.bind(this), false);
   this.loadCurrentFile();
   this.processOutstanding();
 
@@ -156,14 +154,14 @@ Editor.prototype.handleKeyDown = function(evt) {
 };
 
 Editor.prototype.handleInput = function() {
-  this.setText(this.getTextFromEditor());
+  this.setText(this.getTextFromEditor(), true);
 };
 
 Editor.prototype.sameElement = function(a, b) {
   return a.nodeName === b.nodeName && a.textContent === b.textContent && a.classList === b.classList;
 };
 
-Editor.prototype.setText = function(newText) {
+Editor.prototype.setText = function(newText, doSetSelection) {
   var childNodes = this.editor.childNodes;
   var fragment = this.getFragmentFromText(newText);
   var newChildNodes = fragment.childNodes;
@@ -171,8 +169,11 @@ Editor.prototype.setText = function(newText) {
 
   this.operationQueue = [];
 
-  var range = window.getSelection().getRangeAt(0);
-  var selectionTextIndex = this.getSelectionTextIndex(range);
+  var selectionTextIndex;
+  if(doSetSelection) {
+    var range = window.getSelection().getRangeAt(0);
+    selectionTextIndex = this.getSelectionTextIndex(range);
+  }
 
   for(var newChildIndex = 0; newChildIndex < newChildNodes.length; newChildIndex++) {
     var newChild = newChildNodes[newChildIndex];
@@ -190,7 +191,9 @@ Editor.prototype.setText = function(newText) {
     this.scheduleDelete(childNodes[childIndex]);
   }
 
-  this.scheduleSetSelectionTextIndex(selectionTextIndex);
+  if(doSetSelection) {
+    this.scheduleSetSelectionTextIndex(selectionTextIndex);
+  }
 
   this.scheduledText = newText;
   this.changed = true;
@@ -267,7 +270,7 @@ Editor.prototype.loadCurrentFile = function() {
   var request = new XMLHttpRequest();
   var self = this;
   request.onload = function() {
-    self.editor.textContent = this.responseText;
+    self.setText(this.responseText, false);
     self.enabled = true;
   };
   request.open("get", loc, true);
@@ -297,7 +300,6 @@ Editor.prototype.getFragmentFromText = function(text) {
   for(var i = 0; i < lines.length; i++) {
     var line = lines[i];
     var tokenPairs = this.proc.getTokenPairs(line);
-    console.log("tkp: "+tokenPairs.toSource());
     tokenPairs.map(makeSpan);
     if(i < lines.length - 1) {
       fragment.appendChild(document.createElement("br"));
@@ -333,14 +335,3 @@ Editor.prototype.notifyChangeListeners = function() {
   }
 };
 
-Editor.prototype.saveCurrentFile = function() {
-  var text = this.getText();
-
-  var data = new FormData();
-  data.append("text", text);
-  var request = new XMLHttpRequest();
-  request.open("POST", window.location);
-  request.send(data);
-};
-
-window.editor = new Editor();
