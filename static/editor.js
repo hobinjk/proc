@@ -111,7 +111,6 @@ Editor.prototype.getSelectionRange = function(textIndex) {
   var node = null;
 
   while((node = treeWalker.nextNode()) !== null) {
-    console.log(node);
     if(node.nodeType === node.TEXT_NODE) {
       var textContent = node.textContent;
       if(textContent.length < remainingText) {
@@ -119,7 +118,13 @@ Editor.prototype.getSelectionRange = function(textIndex) {
         continue;
       } else {
         var range = document.createRange();
-        range.setStart(node, remainingText);
+        try {
+          range.setStart(node, remainingText);
+        } catch(e) {
+          console.log("ise: ");
+          console.log(node);
+          console.log(remainingText);
+        }
         return range;
       }
     } else if(node.nodeName.toLowerCase() === "br") {
@@ -164,21 +169,6 @@ Editor.prototype.setText = function(newText) {
 
   var range = window.getSelection().getRangeAt(0);
   var selectionTextIndex = this.getSelectionTextIndex(range);
-  //var otherRange = this.getSelectionRange(selectionTextIndex);
-  //var otherSTI = this.getSelectionTextIndex(otherRange);
-  //console.log("sti check 1: "+range+" == "+otherRange+" ("+(range === otherRange)+")");
-  //console.log("sti check 2: "+selectionTextIndex+" == "+otherSTI);
-
-
-  //console.log("want: ");
-  //for(var i = 0; i < newChildNodes.length; i++) {
-  //  console.log(newChildNodes[i]);
-  //}
-  //console.log("have");
-  //for(i = 0; i < childNodes.length; i++) {
-  //  console.log(childNodes[i]);
-  //}
-  //console.log("so that was a thing");
 
   for(var newChildIndex = 0; newChildIndex < newChildNodes.length; newChildIndex++) {
     var newChild = newChildNodes[newChildIndex];
@@ -199,9 +189,6 @@ Editor.prototype.setText = function(newText) {
   this.scheduledFragment.innerHTML = fragment.innerHTML;
 
   this.scheduleSetSelectionTextIndex(selectionTextIndex);
-
-  // todo thread
-  this.processOutstanding();
 };
 
 Editor.prototype.makeReplaceOperation = function(node, fragment) {
@@ -209,10 +196,6 @@ Editor.prototype.makeReplaceOperation = function(node, fragment) {
   return {
     name: "replace",
     op: function() {
-      console.log("replacing!");
-      console.log(node);
-      console.log(fragment);
-
       if(fragment) {
         self.editor.insertBefore(fragment, node);
       }
@@ -240,7 +223,9 @@ Editor.prototype.makeSetSelectionTextIndex = function(textIndex) {
   return function() {
     var newRange = self.getSelectionRange(textIndex);
     var currentRange = window.getSelection().getRangeAt(0);
-    currentRange.setStart(newRange.startContainer, newRange.startOffset);
+    if(newRange) {
+      currentRange.setStart(newRange.startContainer, newRange.startOffset);
+    }
   };
 };
 
@@ -257,13 +242,16 @@ Editor.prototype.scheduleSetSelectionTextIndex = function(textIndex) {
 };
 
 Editor.prototype.processOutstanding = function() {
+  var self = this;
+  window.setTimeout(function() {
+    self.processOutstanding();
+  }, 33);
+
   if(this.operationQueue.length === 0) return;
   while(this.operationQueue.length > 0) {
     var operation = this.operationQueue.shift();
     operation.op();
   }
-
-  // window.requestAnimationFrame(this.processOutstanding.bind(this));
 };
 
 Editor.prototype.loadCurrentFile = function() {
@@ -284,13 +272,7 @@ Editor.prototype.getSpanFromToken = function(part, token) {
   var cls = this.classFromType(token.type);
   var span = document.createElement("span");
   span.classList.add(cls);
-  console.log("span class="+cls+" from "+token.type+" "+token);
-  // unecessary due to white-space pre
-  //if(this.proc.whiteSpaceRegex.test(part)) {
-  //  span.innerHTML = part.replace(/ /g, "&nbsp;");
-  //} else {
   span.textContent = part;
-  //}
   if(token.description) {
     span.title = token.description;
   }
@@ -311,7 +293,7 @@ Editor.prototype.getFragmentFromText = function(text) {
     var tokenPairs = this.proc.getTokenPairs(line);
     tokenPairs.map(makeSpan);
     if(i < lines.length - 1) {
-      fragment.appendChild(this.createRealBreak());
+      fragment.appendChild(document.createElement("br"));
     }
   }
   return fragment;
@@ -331,9 +313,7 @@ Editor.prototype.getTextFromHtml = function(markup) {
 
 Editor.prototype.getText = function() {
   var text = this.editor.innerHTML;
-  console.log("IHTM: \""+text+"\"");
   text = this.getTextFromHtml(text);
-  console.log("TEXT: \""+text+"\"");
   return text;
 };
 
