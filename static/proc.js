@@ -1,3 +1,7 @@
+/* jshint undef: true, unused: true, browser: true, moz: true */
+/* global console */
+/* environment browser */
+
 function Proc() {
   this.instructions = [];
   this.symbols = [];
@@ -52,7 +56,7 @@ Proc.prototype.getDescription = function(name) {
 Proc.prototype.getLabelDeclarationByName = function(name) {
   for(var i = 0, len = this.labelDeclarations.length; i < len; i++) {
     var labelDecl = this.labelDeclarations[i];
-    if(labelDecl.name === token)
+    if(labelDecl.name === name)
       return labelDecl;
   }
   return null;
@@ -117,11 +121,11 @@ Proc.prototype.isOrganization = function(token) {
   return token === this.organizationSpecifier;
 };
 
-Proc.prototype.getOrganization = function(token) {
+Proc.prototype.getOrganization = function() {
   return {type: Proc.ORGANIZATION};
 };
 
-Proc.prototype.getComment = function(token) {
+Proc.prototype.getComment = function() {
   return {type: Proc.COMMENT};
 };
 
