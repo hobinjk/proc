@@ -1,3 +1,7 @@
+/* jshint undef: true, unused: true, browser: true, moz: true */
+/* global Proc, console, Encoder */
+/* environment browser */
+
 function Proc8051() {
   Proc.call(this);
   this.constantRegex = /^#?([0-9a-fA-F]+[hbd]?)$/;
@@ -503,35 +507,48 @@ Proc8051.prototype.getLengthPassResults = function(text) {
   var labelAddresses = {};
   var byteAddr = 0;
 
+  function tokenTypeValid(t) {
+    return (t.type !== Proc.INVALID) && (t.type !== Proc.COMMENT);
+  }
+
+  function tokenPairTypeValid(tp) {
+    return tokenTypeValid(tp.token);
+  }
+
+  function getTokenPairToken(tp) {
+    return tp.token;
+  }
+
   for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     var line = lines[lineIndex];
-    var strTokens = line.split(this.whiteSpaceRegex);
-    var tokens = strTokens.map(this.getToken.bind(this));
+    var tokenPairs = this.getTokenPairs(line);
 
     // check validity of tokens. If one of them is legit invalid, report it
     var errorInLine = false;
     var tokensInLine = false;
-    for(var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++) {
-      var strToken = strTokens[tokenIndex];
-      var token = tokens[tokenIndex];
-      if(token.type !== Proc.INVALID) {
+
+    for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
+      var tokenText = tokenPairs[tokenIndex].text;
+      var token = tokenPairs[tokenIndex].token;
+      if(tokenTypeValid(token)) {
         tokensInLine = true;
         continue;
       }
 
-      if((!this.whiteSpaceRegex.test(strToken)) && (strToken.length > 0)) {
-        errors.push({line: lineIndex, text: "Invalid token \""+strToken+"\""});
-        errorInLine = true;
-        break;
+      if(token.type === Proc.INVALID) {
+        if((!this.whiteSpaceRegex.test(tokenText)) && (tokenText.length > 0)) {
+          errors.push({line: lineIndex, text: "Invalid token \""+tokenText+"\""});
+          errorInLine = true;
+          break;
+        }
       }
     }
 
     if(errorInLine || !tokensInLine) continue;
 
-    tokens = tokens.filter(function(t) {
-      return t.type !== Proc.INVALID;
-    });
+    tokenPairs = tokenPairs.filter(tokenPairTypeValid);
 
+    var tokens = tokenPairs.map(getTokenPairToken);
     tokenGroups.push(tokens);
 
     // handle a .org specifier by setting the current program offset
@@ -550,13 +567,14 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     if(tokens[0].type === Proc.LABEL_DECLARATION) {
       labelAddresses[tokens[0].name] = byteAddr;
       if(tokens.length > 1) {
-        results.warnings.push({line: lineIndex, text: "Junk after label"});
+        warnings.push({line: lineIndex, text: "Junk after label"});
       }
+      continue;
     }
 
     // constants can't start lines
     if(tokens[0].type === Proc.CONSTANT) {
-      results.errors.push({line: lineIndex, text: "Lines may not start with constants"});
+      errors.push({line: lineIndex, text: "Lines may not start with constants"});
       continue;
     }
 
@@ -684,7 +702,7 @@ Proc8051.prototype.getOpcode = function(tokens) {
       continue;
     }
 
-    foundInstr = true;
+    var foundInstr = true;
     // argTest is a test of whether an argument fits for the given instruction
     for(var argIndex = 0; argIndex < possibleInstr.args.length; argIndex++) {
       var argTest = possibleInstr.args[argIndex];
