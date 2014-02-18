@@ -26,8 +26,11 @@ function Editor() {
   this.loadCurrentFile();
   this.processOutstanding();
 
-  this.scheduledFragment = document.createDocumentFragment();
-  this.scheduledFragment.innerHTML = this.editor.innerHTML;
+  this.scheduledText = ""; // this.editor.innerHTML;
+
+  this.textChanged = false;
+  this.cachedText = "";
+  this.changeListeners = [];
 }
 
 Editor.prototype.classFromType = function(type) {
@@ -98,7 +101,7 @@ Editor.prototype.getSelectionTextIndex = function(range) {
     }
   }
 
-  return -1;
+  return offset;
 };
 
 Editor.prototype.getSelectionRange = function(textIndex) {
@@ -124,6 +127,7 @@ Editor.prototype.getSelectionRange = function(textIndex) {
           console.log("ise: ");
           console.log(node);
           console.log(remainingText);
+          console.log("trying for: "+textIndex);
         }
         return range;
       }
@@ -152,7 +156,7 @@ Editor.prototype.handleKeyDown = function(evt) {
 };
 
 Editor.prototype.handleInput = function() {
-  this.setText(this.getText());
+  this.setText(this.getTextFromEditor());
 };
 
 Editor.prototype.sameElement = function(a, b) {
@@ -186,9 +190,11 @@ Editor.prototype.setText = function(newText) {
     this.scheduleDelete(childNodes[childIndex]);
   }
 
-  this.scheduledFragment.innerHTML = fragment.innerHTML;
-
   this.scheduleSetSelectionTextIndex(selectionTextIndex);
+
+  this.scheduledText = newText;
+  this.changed = true;
+  this.notifyChangeListeners();
 };
 
 Editor.prototype.makeReplaceOperation = function(node, fragment) {
@@ -291,6 +297,7 @@ Editor.prototype.getFragmentFromText = function(text) {
   for(var i = 0; i < lines.length; i++) {
     var line = lines[i];
     var tokenPairs = this.proc.getTokenPairs(line);
+    console.log("tkp: "+tokenPairs.toSource());
     tokenPairs.map(makeSpan);
     if(i < lines.length - 1) {
       fragment.appendChild(document.createElement("br"));
@@ -299,22 +306,31 @@ Editor.prototype.getFragmentFromText = function(text) {
   return fragment;
 };
 
-Editor.prototype.getTextFromHtml = function(markup) {
-  var text = markup;
-  //incorrect under white-space pre
-  //text = text.replace("\n", "");
-  //text = text.replace(" ", "");
+Editor.prototype.getTextFromEditor = function() {
+  var text = this.editor.innerHTML;
   text = text.replace(/<br[^>]*>/g, "\n");
-  text = text.replace(/<[^>]+>/g, "");
-  //text = text.replace(/&nbsp;/g, " ");
-
+  text = text.replace(/<[^>]*>/g, "");
   return text;
 };
 
 Editor.prototype.getText = function() {
-  var text = this.editor.innerHTML;
-  text = this.getTextFromHtml(text);
-  return text;
+  return this.scheduledText;
+};
+
+Editor.prototype.attachChangeListener = function(listener) {
+  this.changeListeners.push(listener);
+};
+
+Editor.prototype.removeChangeListener = function(listener) {
+  this.changeListeners = this.changeListeners.filter(function(other) {
+    return other !== listener;
+  });
+};
+
+Editor.prototype.notifyChangeListeners = function() {
+  for(var i = 0; i < this.changeListeners.length; i++) {
+    this.changeListeners[i](this.getText());
+  }
 };
 
 Editor.prototype.saveCurrentFile = function() {
