@@ -2,22 +2,26 @@ function Encoder() {
   this.defaultByteCount = 16;
 }
 
-Encoder.prototype.encode = function(bytes) {
+Encoder.prototype.encode = function(bytes, byteLength) {
   var lines = [];
-  var byteLength = 0;
-  for(var addr = bytes.length - 1; addr >= 0; addr--) {
-    if(bytes[addr] === 0) {
-      continue;
-    }
-    byteLength = addr+1;
-    break;
-  }
 
   var recordTypeHex = "00";
-  for(var addr = 0; addr < byteLength; addr += this.byteCount) {
+  var byteCount = this.defaultByteCount;
+
+  for(var addr = 0; addr < byteLength; addr += byteCount) {
+    byteCount = Math.min(this.defaultByteCount, byteLength - addr);
+    while(bytes[addr+byteCount-1] === 0 && byteCount > 0) {
+      byteCount --;
+    }
+
+    if(byteCount === 0) {
+      byteCount = this.defaultByteCount;
+      continue;
+    }
+    byteCount = Math.min(this.defaultByteCount, byteLength - addr);
+
     var checksum = 0;
     var addressHex = this.hex(addr, 4);
-    var byteCount = Math.min(this.defaultByteCount, byteLength - addr);
     var byteCountHex = this.hex(byteCount, 2);
     var dataHexParts = [];
 
@@ -40,7 +44,7 @@ Encoder.prototype.encode = function(bytes) {
 };
 
 Encoder.prototype.hex = function(value, count) {
-  var hexStr = value.toString(16);
+  var hexStr = value.toString(16).toUpperCase();
   while(hexStr.length < count) {
     hexStr = "0"+hexStr;
   }

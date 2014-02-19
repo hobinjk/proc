@@ -813,7 +813,7 @@ Proc8051.prototype.generateAssembly = function(text) {
     };
   }
 
-  var encodeResults = new Encoder().encode(generatePassResults.programBytes);
+  var encodeResults = new Encoder().encode(generatePassResults.programBytes, generatePassResults.programBytesLength);
 
   return {
     hex: encodeResults,
