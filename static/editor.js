@@ -67,7 +67,7 @@ Editor.prototype.handleTabKey = function(evt) {
   var sel = window.getSelection();
   var range = sel.getRangeAt(0);
   range.insertNode(document.createTextNode("  "));
-  sel.collapseToStart();
+  sel.collapseToEnd();
 };
 
 Editor.prototype.getSelectionTextIndex = function(range) {
@@ -75,6 +75,9 @@ Editor.prototype.getSelectionTextIndex = function(range) {
   var offset = 0;
   var targetNode = range.startContainer;
   var targetOffset = range.startOffset;
+  console.log(targetNode);
+  console.log("with offset "+targetOffset);
+
 
   // if startContainer is a text node the offset is number of characters
   // otherwise it is the number of child nodes between the start of
@@ -173,6 +176,8 @@ Editor.prototype.setText = function(newText, doSetSelection) {
   if(doSetSelection) {
     var range = window.getSelection().getRangeAt(0);
     selectionTextIndex = this.getSelectionTextIndex(range);
+    console.log("want: "+selectionTextIndex);
+    console.log("is here: "+newText.slice(selectionTextIndex-3,selectionTextIndex+3));
   }
 
   for(var newChildIndex = 0; newChildIndex < newChildNodes.length; newChildIndex++) {
@@ -231,18 +236,24 @@ Editor.prototype.makeSetSelectionTextIndex = function(textIndex) {
   var self = this;
   return function() {
     var newRange = self.getSelectionRange(textIndex);
-    var currentRange = window.getSelection().getRangeAt(0);
+    //var currentRange = window.getSelection().getRangeAt(0);
     if(newRange) {
-      currentRange.setStart(newRange.startContainer, newRange.startOffset);
+      //currentRange.setStart(newRange.startContainer, newRange.startOffset);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(newRange);
+
+      console.log("end up with: "+self.getSelectionTextIndex(newRange));
+      console.log("is here: "+self.getTextFromEditor().slice(textIndex-3,textIndex+3));
     }
+
   };
 };
 
 Editor.prototype.scheduleSetSelectionTextIndex = function(textIndex) {
   // remove any existing place operations
-  this.operationQueue = this.operationQueue.filter(function(oper) {
-    return oper.name !== "place";
-  });
+  //this.operationQueue = this.operationQueue.filter(function(oper) {
+  //  return oper.name !== "place";
+  //});
 
   this.operationQueue.push({
     name: "place",
@@ -282,7 +293,7 @@ Editor.prototype.getSpanFromToken = function(part, token) {
   var cls = this.classFromType(token.type);
   var span = document.createElement("span");
   span.classList.add(cls);
-  span.textContent = part;
+  span.innerHTML = part;
   if(token.description) {
     span.title = token.description;
   }
@@ -313,6 +324,7 @@ Editor.prototype.getTextFromEditor = function() {
   var text = this.editor.innerHTML;
   text = text.replace(/<br[^>]*>/g, "\n");
   text = text.replace(/<[^>]*>/g, "");
+  text = text.replace(/&nbsp;/g, " ");
   return text;
 };
 
