@@ -165,14 +165,14 @@ function Proc8051() {
 
   this.addSymbol("B",     0xF0, "B register", 8);
 
-  this.addSymbol("R0", -1, "register zero", 8);
-  this.addSymbol("R1", -1, "register one", 8);
-  this.addSymbol("R2", -1, "register two", 8);
-  this.addSymbol("R3", -1, "register three", 8);
-  this.addSymbol("R4", -1, "register four", 8);
-  this.addSymbol("R5", -1, "register five", 8);
-  this.addSymbol("R6", -1, "register six", 8);
-  this.addSymbol("R7", -1, "register seven", 8);
+  this.addSymbol("R0", 0, "register zero", 8);
+  this.addSymbol("R1", 1, "register one", 8);
+  this.addSymbol("R2", 2, "register two", 8);
+  this.addSymbol("R3", 3, "register three", 8);
+  this.addSymbol("R4", 4, "register four", 8);
+  this.addSymbol("R5", 5, "register five", 8);
+  this.addSymbol("R6", 6, "register six", 8);
+  this.addSymbol("R7", 7, "register seven", 8);
 
   this.addSymbol("@R0", -1, "value pointed to by register zero", 8);
   this.addSymbol("@R1", -1, "value pointed to by register one", 8);
