@@ -590,7 +590,10 @@ Proc8051.prototype.getLengthPassResults = function(text) {
       }
     }
 
-    if(errorInLine || !tokensInLine) continue;
+    if(errorInLine || !tokensInLine) {
+      tokenGroups.push([]);
+      continue;
+    }
 
     tokenPairs = tokenPairs.filter(tokenPairTypeValid);
 
@@ -656,14 +659,20 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
 
   for(var lineIndex = 0; lineIndex < tokenGroups.length; lineIndex++) {
     var tokens = tokenGroups[lineIndex];
+    if(tokens.length === 0) continue;
+
+    if(tokens[0].type === Proc.ORGANIZATION) {
+      byteAddr = tokens[1].value;
+      continue;
+    }
+
     if(tokens[0].type !== Proc.INSTRUCTION) {
-      // skip label declarations and other junk
       continue;
     }
 
     var opcode = this.getOpcode(tokens);
     if(!opcode) {
-      errors.push("Could not find valid opcode for "+tokens[0].name);
+      errors.push({line: lineIndex, text: "Could not find valid opcode for "+tokens[0].name});
       break;
     }
 
@@ -698,7 +707,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
         case "djnz":
           var offset = targetAddr - byteAddr - opcode.length;
           if(offset > 127 || offset < -128) {
-            errors.push("Relative jump offset out of range");
+            errors.push({line: lineIndex, text: "Relative jump offset out of range"});
           }
           programBytes[byteAddr+byteOffset] = offset;
           // relative addring
@@ -708,7 +717,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
           // absolute (addr11)
           // first three bits are packed in instruction
           if(targetAddr > 0x3ff) {
-            errors.push("Absolute call address out of range");
+            errors.push({line: lineIndex, text: "Absolute call address out of range"});
           }
           var firstThree = ((targetAddr >> 8)&0x7);
           programBytes[byteAddr] &= 0x1f;
@@ -719,8 +728,12 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
 
       } else {
         var byteRepResults = this.getByteRepresentation(token);
-        errors = errors.concat(byteRepResults.errors);
-        warnings = warnings.concat(byteRepResults.warnings);
+        for(var errorText of byteRepResults.errors) {
+          errors.push({line: lineIndex, text: errorText});
+        }
+        for(var warningText of byteRepResults.warnings) {
+          warnings.push({line: lineIndex, text: warningText});
+        }
         programBytes[byteAddr+byteOffset] = byteRepResults.value;
       }
     }
@@ -728,7 +741,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     byteAddr += opcode.length;
   }
 
-  return {errors: errors, warnings: warnings, programBytes: programBytes};
+  return {errors: errors, warnings: warnings, programBytes: programBytes, programBytesLength: byteAddr};
 };
 
 Proc8051.prototype.getOpcode = function(tokens) {
@@ -737,10 +750,8 @@ Proc8051.prototype.getOpcode = function(tokens) {
 
   // opcodes are grouped by instruction name
   var instrName = tokens[0].name;
-  var debug = instrName === "cjne";
 
   var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
-  if(debug) console.log(tokens.toSource());
 
   for(var i = 0, len = possibleInstrs.length; i < len; i++) {
     var possibleInstr = possibleInstrs[i];
@@ -755,11 +766,6 @@ Proc8051.prototype.getOpcode = function(tokens) {
       var argActual = tokens[argIndex+1];
 
       if(!argTest(argActual)) {
-        if(debug) {
-          console.log("Failed test of "+argActual.toSource());
-          console.log(argTest.toSource());
-        }
-
         foundInstr = false;
         break;
       }
