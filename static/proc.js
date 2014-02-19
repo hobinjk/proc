@@ -6,6 +6,8 @@ function Proc() {
   this.instructions = [];
   this.symbols = [];
   this.labelDeclarations = [];
+  this.equDeclarations = {};
+
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
   this.whiteSpaceRegex = /([ ,]+|\n)/;
@@ -16,7 +18,7 @@ function Proc() {
 Proc.INVALID = -1;
 Proc.INSTRUCTION = 0;
 Proc.LABEL_DECLARATION = 1;
-Proc.LABEL = 2;
+Proc.LABEL_REFERENCE = 2;
 Proc.CONSTANT = 3;
 Proc.SYMBOL = 4;
 Proc.ORGANIZATION = 5;
@@ -51,6 +53,11 @@ Proc.prototype.getDescription = function(name) {
   if(instr)
     return instr.description;
   return "there is no help for you here";
+};
+
+Proc.prototype.clearDeclarations = function() {
+  this.labelDeclarations = [];
+  this.equDeclarations = {};
 };
 
 Proc.prototype.getLabelDeclarationByName = function(name) {
@@ -140,12 +147,12 @@ Proc.prototype.getToken = function(token) {
   var labelRef = this.getLabelReference(token);
   if(labelRef) return labelRef;
 
-  if(this.isConstant(token)) {
-    return this.getConstant(token);
-  }
-
   if(this.isSymbol(token)) {
     return this.getSymbol(token); // "symbol" like P1 or DPTR
+  }
+
+  if(this.isConstant(token)) {
+    return this.getConstant(token);
   }
 
   if(this.isOrganization(token)) {
@@ -174,3 +181,36 @@ Proc.prototype.getTokenPairs = function(line) {
   }
   return tokens;
 };
+
+Proc.prototype.getTokenPairsByLine = function(text) {
+  var lines = text.split("\n");
+  var tokenPairsByLine = new Array(lines);
+
+  // clear all existing declarations of equ's and labels
+  this.clearDeclarations();
+
+  var line, lineIndex;
+  // pass one, getting declarations and anything that doesn't depend on them
+  for(lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    line = lines[lineIndex];
+    tokenPairsByLine[lineIndex] = this.getTokenPairs(line);
+  }
+
+  // pass two, expanding everything
+  for(lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    line = lines[lineIndex];
+    var allGood = true;
+    var tokenPairs = tokenPairsByLine[lineIndex];
+    for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
+      if(tokenPairs[tokenIndex].token.type === Proc.INVALID) {
+        allGood = false;
+        break;
+      }
+    }
+    if(allGood) continue;
+    tokenPairsByLine[lineIndex] = this.getTokenPairs(line);
+  }
+
+  return tokenPairsByLine;
+};
+

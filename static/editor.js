@@ -301,7 +301,6 @@ Editor.prototype.getSpanFromToken = function(part, token) {
 };
 
 Editor.prototype.getFragmentFromText = function(text) {
-  var lines = text.split("\n");
   var fragment = document.createDocumentFragment();
   var self = this;
   function makeSpan(tokenPair) {
@@ -309,11 +308,12 @@ Editor.prototype.getFragmentFromText = function(text) {
     fragment.appendChild(self.getSpanFromToken(tokenPair.text, tokenPair.token));
   }
 
-  for(var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    var tokenPairs = this.proc.getTokenPairs(line);
+  var tokenPairsByLine = this.proc.getTokenPairsByLine(text);
+
+  for(var i = 0; i < tokenPairsByLine.length; i++) {
+    var tokenPairs = tokenPairsByLine[i];
     tokenPairs.map(makeSpan);
-    if(i < lines.length - 1) {
+    if(i < tokenPairsByLine.length - 1) {
       fragment.appendChild(document.createElement("br"));
     }
   }

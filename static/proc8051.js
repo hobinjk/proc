@@ -161,6 +161,7 @@ function Proc8051() {
   this.addSymbol("C",    10*8+7, "carry flag", 1);
 
   this.addSymbol("ACC",   0xE0, "accumulator", 8);
+  this.addSymbol("A",   0xE0, "accumulator", 8);
 
   this.addSymbol("B",     0xF0, "B register", 8);
 
@@ -535,6 +536,7 @@ Proc8051.prototype.parseConstant = function(constant) {
 
 Proc8051.prototype.getLengthPassResults = function(text) {
   var lines = text.split("\n");
+  var tokenPairsByLine = this.getTokenPairsByLine(text);
 
   var tokenGroups = [];
   var errors = [];
@@ -555,8 +557,7 @@ Proc8051.prototype.getLengthPassResults = function(text) {
   }
 
   for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    var line = lines[lineIndex];
-    var tokenPairs = this.getTokenPairs(line);
+    var tokenPairs = tokenPairsByLine[lineIndex];
 
     // check validity of tokens. If one of them is legit invalid, report it
     var errorInLine = false;
@@ -726,8 +727,10 @@ Proc8051.prototype.getOpcode = function(tokens) {
 
   // opcodes are grouped by instruction name
   var instrName = tokens[0].name;
+  var debug = instrName === "cjne";
 
   var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
+  if(debug) console.log(tokens.toSource());
 
   for(var i = 0, len = possibleInstrs.length; i < len; i++) {
     var possibleInstr = possibleInstrs[i];
@@ -742,6 +745,11 @@ Proc8051.prototype.getOpcode = function(tokens) {
       var argActual = tokens[argIndex+1];
 
       if(!argTest(argActual)) {
+        if(debug) {
+          console.log("Failed test of "+argActual.toSource());
+          console.log(argTest.toSource());
+        }
+
         foundInstr = false;
         break;
       }
