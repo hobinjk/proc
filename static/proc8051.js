@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true, browser: true, moz: true */
-/* global Proc, console, Encoder */
+/* global Proc, Encoder */
 /* environment browser */
 
 function Proc8051() {
@@ -25,7 +25,8 @@ function Proc8051() {
   this.addInstruction("jc", "jump if carry flag is set");
   this.addInstruction("jmp", "jump by offset");
   this.addInstruction("jnb", "jump if bit unset");
-  this.addInstruction("jc", "jump if carry flag is unset");
+  this.addInstruction("jc", "jump if carry flag is set");
+  this.addInstruction("jnc", "jump if carry flag is clear");
   this.addInstruction("jnz", "jump if the accumulator is not zero");
   this.addInstruction("jz", "jump if the accumulator is zero");
   this.addInstruction("lcall", "call subroutine at address");
@@ -51,6 +52,21 @@ function Proc8051() {
   this.addInstruction("xch", "exchange bytes");
   this.addInstruction("xchd", "exchange low nibbles");
   this.addInstruction("xrl", "bitwise xor");
+
+  var self = this;
+  function addBitSymbols(name, startAddr) {
+    for(var offset = 0; offset < 8; offset++) {
+      var description = name+" bit "+offset;
+      for(var i = 0; i < self.symbols.length; i++) {
+        var symbol = self.symbols[i];
+        if(symbol.address === startAddr + offset) {
+          description = symbol.description;
+          break;
+        }
+      }
+      self.addSymbol(name+"."+offset, startAddr + offset, description, 1);
+    }
+  }
 
   // rewording of the symbol table from as31
   this.addSymbol("P0",   0x80, "port zero", 8);
@@ -142,6 +158,7 @@ function Proc8051() {
   this.addSymbol("F0",    10*8+5, "general purpose status flag", 1);
   this.addSymbol("AC",    10*8+6, "auxilary carry flag for addition", 1);
   this.addSymbol("CY",    10*8+7, "carry flag", 1);
+  this.addSymbol("C",    10*8+7, "carry flag", 1);
 
   this.addSymbol("ACC",   0xE0, "accumulator", 8);
 
@@ -164,6 +181,20 @@ function Proc8051() {
   this.addSymbol("PC", -1, "program counter", 0);
   this.addSymbol("AB", -1, "A op B", 0);
 
+  addBitSymbols("P0", 0*8);
+  addBitSymbols("TCON", 1*8);
+  addBitSymbols("P1", 2*8);
+  addBitSymbols("SCON", 3*8);
+  addBitSymbols("P2", 4*8);
+  addBitSymbols("IE", 5*8);
+  addBitSymbols("P3", 6*8);
+  addBitSymbols("IP", 7*8);
+
+  addBitSymbols("PSW", 10*8);
+  addBitSymbols("ACC", 12*8);
+  addBitSymbols("A", 12*8);
+  addBitSymbols("B", 14*8);
+
   function makeEqualTest(symbol) {
     return function(testToken) {
       return testToken === symbol;
@@ -176,7 +207,10 @@ function Proc8051() {
     };
   }
 
-  var A = makeEqualTest(this.getSymbol("ACC"));
+  var A = function(testToken) {
+    return testToken === self.getSymbol("ACC") || testToken === self.getSymbol("A");
+  };
+
   var AB = makeEqualTest(this.getSymbol("AB"));
   var C = makeEqualTest(this.getSymbol("C"));
   var AT_R0 = makeEqualTest(this.getSymbol("@R0"));
@@ -201,7 +235,8 @@ function Proc8051() {
   };
 
   var DATA_ADDR = function(testToken) {
-    return (testToken.type === Proc.SYMBOL) && (testToken.width === 8);
+    return ((testToken.type === Proc.SYMBOL) && (testToken.width === 8)) ||
+      testToken.type === Proc.CONSTANT;
   };
 
   var CONSTANT = makeTypeTest(Proc.CONSTANT);
@@ -681,8 +716,6 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
 
     byteAddr += opcode.length;
   }
-
-  console.log("assembled: "+byteAddr+" bytes");
 
   return {errors: errors, warnings: warnings, programBytes: programBytes};
 };
