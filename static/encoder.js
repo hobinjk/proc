@@ -30,7 +30,6 @@ Encoder.prototype.encode = function(bytes) {
     checksum += byteCount & 0xff;
     checksum = (-checksum) & 0xff; // two's complement
     var checksumHex = this.hex(checksum, 2);
-    console.log(checksum.toString(16)+" and "+checksum);
 
     var dataHex = dataHexParts.join("");
     lines.push(":"+byteCountHex+addressHex+recordTypeHex+dataHex+checksumHex);
