@@ -518,20 +518,30 @@ Proc8051.prototype = Proc.prototype;
 
 Proc8051.prototype.parseConstant = function(constant) {
   var base = constant.charAt(constant.length-1).toLowerCase();
-  var rawConstant = constant.replace(/[^\d]/g, "");
+  var rawConstant = constant.replace(/[hbod]$/, "");
+  var value = 0;
+
   switch(base) {
     case "h":
-      return parseInt(rawConstant, 16);
+      value = parseInt(rawConstant, 16);
+      break;
     case "b":
-      return parseInt(rawConstant, 2);
+      value = parseInt(rawConstant, 2);
+      break;
     case "o":
-      return parseInt(rawConstant, 8);
+      value =  parseInt(rawConstant, 8);
+      break;
     case "d":
-      return parseInt(rawConstant, 10);
+      value = parseInt(rawConstant, 10);
+      break;
     default:
-      return parseInt(rawConstant, 10);
+      value = parseInt(rawConstant, 10);
+      break;
   }
-  throw new Error("Could not parse constant from "+constant);
+  if(isNaN(value)) {
+    throw new Error("Could not parse constant from "+constant);
+  }
+  return value;
 };
 
 Proc8051.prototype.getLengthPassResults = function(text) {
