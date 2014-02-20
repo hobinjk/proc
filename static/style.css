@@ -4,6 +4,11 @@ body {
   font-family: sans-serif;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 html {
   margin: 0;
   padding: 0;
@@ -36,7 +41,7 @@ html {
   position: absolute;
   top: 0;
   right: 5px;
-  padding: 5px;
+  padding: 0px;
   margin: 0px;
   text-align: right;
   color: red;

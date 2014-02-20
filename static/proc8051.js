@@ -654,6 +654,7 @@ Proc8051.prototype.getLengthPassResults = function(text) {
 Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses) {
   var byteAddr = 0;
   var programBytes = new Uint8Array(64*1024); //about 64k of memory, whatever
+  var opcodes = new Array(tokenGroups.length);
   var errors = [];
   var warnings = [];
 
@@ -677,6 +678,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     }
 
     programBytes[byteAddr] = opcode.opcode;
+    opcodes[lineIndex] = {opcode: opcode, address: byteAddr};
 
     // special case for mov data_addr, data_addr because its source and dest are swapped memory-wise
     if(opcode.opcode === 0x85) {
@@ -741,7 +743,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     byteAddr += opcode.length;
   }
 
-  return {errors: errors, warnings: warnings, programBytes: programBytes, programBytesLength: byteAddr};
+  return {errors: errors, warnings: warnings, programBytes: programBytes, programBytesLength: byteAddr, opcodes: opcodes};
 };
 
 Proc8051.prototype.getOpcode = function(tokens) {
@@ -801,7 +803,6 @@ Proc8051.prototype.getByteRepresentation = function(token) {
   return {errors: errors, warnings: warnings, value: -1};
 };
 
-
 Proc8051.prototype.generateAssembly = function(text) {
   var lengthPassResults = this.getLengthPassResults(text);
   var tokenGroups = lengthPassResults.tokenGroups;
@@ -817,19 +818,24 @@ Proc8051.prototype.generateAssembly = function(text) {
     };
   }
 
-  var generatePassResults = this.getGeneratePassResults(tokenGroups, labelAddresses);
-  warnings = warnings.concat(generatePassResults.warnings);
-  errors = errors.concat(generatePassResults.errors);
+  return this.getGeneratePassResults(tokenGroups, labelAddresses);
+};
 
-  if(errors.length > 0) {
+Proc8051.prototype.generateHex = function(text) {
+  var assembly = this.generateAssembly(text);
+
+  if(assembly.errors.length > 0) {
     return {
       hex: null,
-      errors: errors,
-      warnings: warnings
+      errors: assembly.errors,
+      warnings: assembly.warnings
     };
   }
 
-  var encodeResults = new Encoder().encode(generatePassResults.programBytes, generatePassResults.programBytesLength);
+  var encodeResults = new Encoder().encode(assembly.programBytes, assembly.programBytesLength);
+  var errors = encodeResults.errors.concat(assembly.errors);
+  var warnings = encodeResults.warnings.concat(assembly.warnings);
+
 
   return {
     hex: encodeResults,

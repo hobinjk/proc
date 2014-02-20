@@ -18,10 +18,22 @@ function EWDisplayer(editor) {
 }
 
 EWDisplayer.prototype.makeError = function(errorText) {
-  var errorSpan = document.createElement("span");
-  errorSpan.classList.add("ew-error");
-  errorSpan.textContent = errorText;
-  return errorSpan;
+  return this.makeSpan("ew-error", errorText);
+};
+
+EWDisplayer.prototype.makeWarning = function(text) {
+  return this.makeSpan("ew-warning", text);
+};
+
+EWDisplayer.prototype.makeListing = function(text) {
+  return this.makeSpan("ew-listing", text);
+};
+
+EWDisplayer.prototype.makeSpan = function(cls, text) {
+  var span = document.createElement("span");
+  span.classList.add(cls);
+  span.textContent = text;
+  return span;
 };
 
 EWDisplayer.prototype.makeDownloadLink = function(hex) {
@@ -37,9 +49,12 @@ EWDisplayer.prototype.onChange = function(text) {
   var assemblyResults = this.proc.generateAssembly(text);
   var errors = assemblyResults.errors;
   var warnings = assemblyResults.warnings;
+  var opcodes = assemblyResults.opcodes;
+  var programBytes = assemblyResults.programBytes;
   var lines = [];
+  var lineIndex = 0;
 
-  if(errors.length > 0 || warnings.length > 0) {
+  if((errors.length > 0) || (warnings.length > 0)) {
     for(var i = 0; i < errors.length; i++) {
       var error = errors[i];
       if(!lines[error.line]) {
@@ -48,12 +63,41 @@ EWDisplayer.prototype.onChange = function(text) {
 
       lines[error.line].push(this.makeError(error.text));
     }
+    for(i = 0; i < errors.length; i++) {
+      var warning = warnings[i];
+      if(!lines[warning.line]) {
+        lines[warning.line] = [];
+      }
+
+      lines[warning.line].push(this.makeWarning(warning.text));
+    }
   } else {
-    lines[0] = [this.makeDownloadLink(assemblyResults.hex)];
+    //lines[0] = [this.makeDownloadLink(assemblyResults.hex)];
+    for(lineIndex = 0; lineIndex < opcodes.length; lineIndex++) {
+      var opcodeBundle = opcodes[lineIndex];
+      if(!opcodeBundle) {
+        continue;
+      }
+      var opcode = opcodeBundle.opcode;
+      if(!opcode) {
+        continue;
+      }
+      var address = opcodeBundle.address;
+
+      var listing = "";
+      for(var offset = 0; offset < opcode.length; offset++) {
+        listing += programBytes[address+offset].toString(16).toUpperCase();
+        if(offset < opcode.length - 1) {
+          listing += " ";
+        }
+      }
+
+      lines[lineIndex] = [this.makeListing(listing)];
+    }
   }
 
   var containerFragment = document.createDocumentFragment();
-  for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+  for(lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     var lineParts = lines[lineIndex];
     if(lineParts && (lineParts.length > 0)) {
       for(var partIndex = 0; partIndex < lineParts.length; partIndex++) {
