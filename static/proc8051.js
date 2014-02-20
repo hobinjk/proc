@@ -755,6 +755,8 @@ Proc8051.prototype.getOpcode = function(tokens) {
 
   var possibleInstrs = this.opcodes.filter(function(op) { return op.name === instrName; });
 
+  var foundInstrs = [];
+
   for(var i = 0, len = possibleInstrs.length; i < len; i++) {
     var possibleInstr = possibleInstrs[i];
     if(possibleInstr.args.length !== tokens.length - 1) {
@@ -773,11 +775,22 @@ Proc8051.prototype.getOpcode = function(tokens) {
       }
     }
     if(foundInstr) {
-      return possibleInstr;
+      foundInstrs.push(possibleInstr);
     }
   }
 
-  return null;
+  if(foundInstrs.length === 0) {
+    return null;
+  }
+
+  // minimize opcode length
+  var bestInstr = foundInstrs[0];
+  for(i = 1; i < foundInstrs.length; i++) {
+    if(bestInstr.length > foundInstrs[i].length) {
+      bestInstr = foundInstrs[i];
+    }
+  }
+  return bestInstr;
 };
 
 Proc8051.prototype.getByteRepresentation = function(token) {
