@@ -38,7 +38,7 @@ EWDisplayer.prototype.makeSpan = function(cls, text) {
 
 EWDisplayer.prototype.makeDownloadLink = function(hex) {
   var downloadLink = document.createElement("a");
-  downloadLink.classList.add("download-link");
+  downloadLink.id = "download-link";
   downloadLink.href = window.URL.createObjectURL(new Blob([hex], {type: "text/plain"}));
   downloadLink.textContent = "download hex";
   return downloadLink;
@@ -63,7 +63,7 @@ EWDisplayer.prototype.onChange = function(text) {
 
       lines[error.line].push(this.makeError(error.text));
     }
-    for(i = 0; i < errors.length; i++) {
+    for(i = 0; i < warnings.length; i++) {
       var warning = warnings[i];
       if(!lines[warning.line]) {
         lines[warning.line] = [];
@@ -72,7 +72,15 @@ EWDisplayer.prototype.onChange = function(text) {
       lines[warning.line].push(this.makeWarning(warning.text));
     }
   } else {
-    //lines[0] = [this.makeDownloadLink(assemblyResults.hex)];
+    var downloadLink = this.makeDownloadLink(this.proc.generateHex(assemblyResults));
+    var currentDownloadLink = document.getElementById(downloadLink.id);
+    if(currentDownloadLink) {
+      currentDownloadLink.parent.removeChild(currentDownloadLink);
+    }
+    document.getElementById("topbar").appendChild(downloadLink);
+
+
+
     for(lineIndex = 0; lineIndex < opcodes.length; lineIndex++) {
       var opcodeBundle = opcodes[lineIndex];
       if(!opcodeBundle) {
