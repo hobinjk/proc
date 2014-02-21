@@ -79,15 +79,14 @@ function Proc8051() {
   this.addSymbol("PCON",  0x87, "power control", 8);
 
   this.addSymbol("TCON",  0x88, "timer one control", 8);
-  this.addSymbol("IT0",   0x08, "interrupt zero type control bit", 1);
-  this.addSymbol("IE0",   0x09, "external interrupt zero edge flag", 1);
-  this.addSymbol("IT1",   0x0A, "interrupt one type control bit", 1);
-  // this.addSymbol("TR2",   0x88+2, "wat");
-  this.addSymbol("IE1",   0x0B, "external interrupt one edge flag", 1);
-  this.addSymbol("TR0",   0x0C, "timer zero run control bit", 1);
-  this.addSymbol("TF0",   0x0D, "timer zero overflow flag", 1);
-  this.addSymbol("TR1",   0x0E, "timer one run control bit", 1);
-  this.addSymbol("TF1",   0x0F, "timer one overflow flag", 1);
+  this.addSymbol("IT0",   0x80+0x08, "interrupt zero type control bit", 1);
+  this.addSymbol("IE0",   0x80+0x09, "external interrupt zero edge flag", 1);
+  this.addSymbol("IT1",   0x80+0x0A, "interrupt one type control bit", 1);
+  this.addSymbol("IE1",   0x80+0x0B, "external interrupt one edge flag", 1);
+  this.addSymbol("TR0",   0x80+0x0C, "timer zero run control bit", 1);
+  this.addSymbol("TF0",   0x80+0x0D, "timer zero overflow flag", 1);
+  this.addSymbol("TR1",   0x80+0x0E, "timer one run control bit", 1);
+  this.addSymbol("TF1",   0x80+0x0F, "timer one overflow flag", 1);
 
   this.addSymbol("TMOD",  0x89, "timer mode control", 8);
   this.addSymbol("TL0",   0x8A, "timer zero low byte", 8);
@@ -98,45 +97,45 @@ function Proc8051() {
   this.addSymbol("P1",    0x90, "port one", 8);
 
   this.addSymbol("SCON", 0x98, "serial control", 8);
-  this.addSymbol("RI",   3*8+0, "receive interrupt flag", 1);
-  this.addSymbol("TI",   3*8+1, "transmit interrupt flag", 1);
-  this.addSymbol("RB8",  3*8+2, "ninth data bit received or stop bit", 1);
-  this.addSymbol("TB8",  3*8+3, "ninth bit to be transmitted", 1);
-  this.addSymbol("REN",  3*8+4, "reception enable", 1);
-  this.addSymbol("SM2",  3*8+5, "multiprocessor communication enable", 1);
-  this.addSymbol("SM1",  3*8+6, "serial port mode bit", 1);
-  this.addSymbol("SM0",  3*8+7, "serial port mode bit", 1);
+  this.addSymbol("RI",   0x80+3*8+0, "receive interrupt flag", 1);
+  this.addSymbol("TI",   0x80+3*8+1, "transmit interrupt flag", 1);
+  this.addSymbol("RB8",  0x80+3*8+2, "ninth data bit received or stop bit", 1);
+  this.addSymbol("TB8",  0x80+3*8+3, "ninth bit to be transmitted", 1);
+  this.addSymbol("REN",  0x80+3*8+4, "reception enable", 1);
+  this.addSymbol("SM2",  0x80+3*8+5, "multiprocessor communication enable", 1);
+  this.addSymbol("SM1",  0x80+3*8+6, "serial port mode bit", 1);
+  this.addSymbol("SM0",  0x80+3*8+7, "serial port mode bit", 1);
 
   this.addSymbol("SBUF", 0x99, "serial buffer", 8);
 
   this.addSymbol("P2", 0xA0, "port two", 8);
 
   this.addSymbol("IE",  0xA8, "interrupt control register", 8);
-  this.addSymbol("EX0", 5*8+0, "external interrupt zero enable", 1);
-  this.addSymbol("ET0", 5*8+1, "timer zero overflow interrupt enable", 1);
-  this.addSymbol("EX1", 5*8+2, "external interrupt one enable", 1);
-  this.addSymbol("ET1", 5*8+3, "timer one overflow interrupt enable", 1);
-  this.addSymbol("ES",  5*8+4, "serial port interrupt enable", 1);
-  this.addSymbol("ET2", 5*8+5, "timer two overflow interrupt enable", 1);
-  this.addSymbol("EA",  5*8+7, "interupt enable", 1);
+  this.addSymbol("EX0", 0x80+5*8+0, "external interrupt zero enable", 1);
+  this.addSymbol("ET0", 0x80+5*8+1, "timer zero overflow interrupt enable", 1);
+  this.addSymbol("EX1", 0x80+5*8+2, "external interrupt one enable", 1);
+  this.addSymbol("ET1", 0x80+5*8+3, "timer one overflow interrupt enable", 1);
+  this.addSymbol("ES",  0x80+5*8+4, "serial port interrupt enable", 1);
+  this.addSymbol("ET2", 0x80+5*8+5, "timer two overflow interrupt enable", 1);
+  this.addSymbol("EA",  0x80+5*8+7, "interupt enable", 1);
 
   this.addSymbol("P3",   0xB0, "port three", 8);
-  this.addSymbol("RXD",  6*8+0, "serial input port", 1);
-  this.addSymbol("TXD",  6*8+1, "serial output port", 1);
-  this.addSymbol("INT0", 6*8+2, "external interrupt zero input", 1);
-  this.addSymbol("INT1", 6*8+3, "external interrupt one input", 1);
-  this.addSymbol("T0",   6*8+4, "timer zero input", 1);
-  this.addSymbol("T1",   6*8+5, "timer one input", 1);
-  this.addSymbol("WR",   6*8+6, "external data write", 1);
-  this.addSymbol("RD",   6*8+7, "external data read", 1);
+  this.addSymbol("RXD",  0x80+6*8+0, "serial input port", 1);
+  this.addSymbol("TXD",  0x80+6*8+1, "serial output port", 1);
+  this.addSymbol("INT0", 0x80+6*8+2, "external interrupt zero input", 1);
+  this.addSymbol("INT1", 0x80+6*8+3, "external interrupt one input", 1);
+  this.addSymbol("T0",   0x80+6*8+4, "timer zero input", 1);
+  this.addSymbol("T1",   0x80+6*8+5, "timer one input", 1);
+  this.addSymbol("WR",   0x80+6*8+6, "external data write", 1);
+  this.addSymbol("RD",   0x80+6*8+7, "external data read", 1);
 
   this.addSymbol("IP",    0xB8, "interrupt priority control", 8);
-  this.addSymbol("PX0",   7*8+0, "external interrupt zero priority level", 1);
-  this.addSymbol("PT0",   7*8+1, "timer zero interrupt priority level", 1);
-  this.addSymbol("PX1",   7*8+2, "external interrupt one priority level", 1);
-  this.addSymbol("PT1",   7*8+3, "timer one interrupt priority level", 1);
-  this.addSymbol("PS",    7*8+4, "serial port interrupt priority level", 1);
-  this.addSymbol("PT2",   7*8+5, "timer two interrupt priority level", 1);
+  this.addSymbol("PX0",   0x80+7*8+0, "external interrupt zero priority level", 1);
+  this.addSymbol("PT0",   0x80+7*8+1, "timer zero interrupt priority level", 1);
+  this.addSymbol("PX1",   0x80+7*8+2, "external interrupt one priority level", 1);
+  this.addSymbol("PT1",   0x80+7*8+3, "timer one interrupt priority level", 1);
+  this.addSymbol("PS",    0x80+7*8+4, "serial port interrupt priority level", 1);
+  this.addSymbol("PT2",   0x80+7*8+5, "timer two interrupt priority level", 1);
 
   // this.addSymbol("T2CON",  0xC8, "timer two control"); 8052 only
   // this.addSymbol("RCAP2L", 0xCA, "wat"); 8052 only
@@ -150,15 +149,15 @@ function Proc8051() {
   // this.addSymbol("TF2",    0xC8+7, "wat");
 
 
-  this.addSymbol("PSW",   0xD0, "program status word", 8);
-  this.addSymbol("P",     10*8+0, "accumulator parity flag", 1);
-  this.addSymbol("OV",    10*8+2, "overflow flag", 1);
-  this.addSymbol("RS0",   10*8+3, "register bank select bit 0", 1);
-  this.addSymbol("RS1",   10*8+4, "register bank select bit 1", 1);
-  this.addSymbol("F0",    10*8+5, "general purpose status flag", 1);
-  this.addSymbol("AC",    10*8+6, "auxilary carry flag for addition", 1);
-  this.addSymbol("CY",    10*8+7, "carry flag", 1);
-  this.addSymbol("C",    10*8+7, "carry flag", 1);
+  this.addSymbol("PSW",  0xD0, "program status word", 8);
+  this.addSymbol("P",    0x80+10*8+0, "accumulator parity flag", 1);
+  this.addSymbol("OV",   0x80+10*8+2, "overflow flag", 1);
+  this.addSymbol("RS0",  0x80+10*8+3, "register bank select bit 0", 1);
+  this.addSymbol("RS1",  0x80+10*8+4, "register bank select bit 1", 1);
+  this.addSymbol("F0",   0x80+10*8+5, "general purpose status flag", 1);
+  this.addSymbol("AC",   0x80+10*8+6, "auxilary carry flag for addition", 1);
+  this.addSymbol("CY",   0x80+10*8+7, "carry flag", 1);
+  this.addSymbol("C",    0x80+10*8+7, "carry flag", 1);
 
   this.addSymbol("ACC",   0xE0, "accumulator", 8);
   this.addSymbol("A",   0xE0, "accumulator", 8);
@@ -182,19 +181,19 @@ function Proc8051() {
   this.addSymbol("PC", -1, "program counter", 0);
   this.addSymbol("AB", -1, "A op B", 0);
 
-  addBitSymbols("P0", 0*8);
-  addBitSymbols("TCON", 1*8);
-  addBitSymbols("P1", 2*8);
-  addBitSymbols("SCON", 3*8);
-  addBitSymbols("P2", 4*8);
-  addBitSymbols("IE", 5*8);
-  addBitSymbols("P3", 6*8);
-  addBitSymbols("IP", 7*8);
+  addBitSymbols("P0",   0x80+0*8);
+  addBitSymbols("TCON", 0x80+1*8);
+  addBitSymbols("P1",   0x80+2*8);
+  addBitSymbols("SCON", 0x80+3*8);
+  addBitSymbols("P2",   0x80+4*8);
+  addBitSymbols("IE",   0x80+5*8);
+  addBitSymbols("P3",   0x80+6*8);
+  addBitSymbols("IP",   0x80+7*8);
 
-  addBitSymbols("PSW", 10*8);
-  addBitSymbols("ACC", 12*8);
-  addBitSymbols("A", 12*8);
-  addBitSymbols("B", 14*8);
+  addBitSymbols("PSW",  0x80+10*8);
+  addBitSymbols("ACC",  0x80+12*8);
+  addBitSymbols("A",    0x80+12*8);
+  addBitSymbols("B",    0x80+14*8);
 
   function makeEqualTest(symbol) {
     return function(testToken) {
@@ -249,262 +248,262 @@ function Proc8051() {
   // CONSTANT is a constant with a pound sign
   // AT_A_PLUS_DPTR is the string "@A+DPTR", arguably "@A + DPTR" or something
   this.opcodes = [
-    {name: "nop", args: [], length: 1},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "ljmp", args: [CODE_ADDR], length: 3},
-    {name: "rr", args: [A], length: 1},
-    {name: "inc", args: [A], length: 1},
-    {name: "inc", args: [DATA_ADDR], length: 2},
-    {name: "inc", args: [AT_R0], length: 1},
-    {name: "inc", args: [AT_R1], length: 1},
-    {name: "inc", args: [R0], length: 1},
-    {name: "inc", args: [R1], length: 1},
-    {name: "inc", args: [R2], length: 1},
-    {name: "inc", args: [R3], length: 1},
-    {name: "inc", args: [R4], length: 1},
-    {name: "inc", args: [R5], length: 1},
-    {name: "inc", args: [R6], length: 1},
-    {name: "inc", args: [R7], length: 1},
-    {name: "jbc", args: [BIT_ADDR, CODE_ADDR], length: 3},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "lcall", args: [CODE_ADDR], length: 3},
-    {name: "rrc", args: [A], length: 1},
-    {name: "dec", args: [A], length: 1},
-    {name: "dec", args: [DATA_ADDR], length: 2},
-    {name: "dec", args: [AT_R0], length: 1},
-    {name: "dec", args: [AT_R1], length: 1},
-    {name: "dec", args: [R0], length: 1},
-    {name: "dec", args: [R1], length: 1},
-    {name: "dec", args: [R2], length: 1},
-    {name: "dec", args: [R3], length: 1},
-    {name: "dec", args: [R4], length: 1},
-    {name: "dec", args: [R5], length: 1},
-    {name: "dec", args: [R6], length: 1},
-    {name: "dec", args: [R7], length: 1},
-    {name: "jb", args: [BIT_ADDR, CODE_ADDR], length: 3},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "ret", args: [], length: 1},
-    {name: "rl", args: [A], length: 1},
-    {name: "add", args: [A, CONSTANT], length: 2},
-    {name: "add", args: [A, DATA_ADDR], length: 2},
-    {name: "add", args: [A, AT_R0], length: 1},
-    {name: "add", args: [A, AT_R1], length: 1},
-    {name: "add", args: [A, R0], length: 1},
-    {name: "add", args: [A, R1], length: 1},
-    {name: "add", args: [A, R2], length: 1},
-    {name: "add", args: [A, R3], length: 1},
-    {name: "add", args: [A, R4], length: 1},
-    {name: "add", args: [A, R5], length: 1},
-    {name: "add", args: [A, R6], length: 1},
-    {name: "add", args: [A, R7], length: 1},
-    {name: "jnb", args: [BIT_ADDR, CODE_ADDR], length: 3},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "reti", args: [], length: 1},
-    {name: "rlc", args: [A], length: 1},
-    {name: "addc", args: [A, CONSTANT], length: 2},
-    {name: "addc", args: [A, DATA_ADDR], length: 2},
-    {name: "addc", args: [A, AT_R0], length: 1},
-    {name: "addc", args: [A, AT_R1], length: 1},
-    {name: "addc", args: [A, R0], length: 1},
-    {name: "addc", args: [A, R1], length: 1},
-    {name: "addc", args: [A, R2], length: 1},
-    {name: "addc", args: [A, R3], length: 1},
-    {name: "addc", args: [A, R4], length: 1},
-    {name: "addc", args: [A, R5], length: 1},
-    {name: "addc", args: [A, R6], length: 1},
-    {name: "addc", args: [A, R7], length: 1},
-    {name: "jc", args: [CODE_ADDR], length: 2},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "orl", args: [DATA_ADDR, A], length: 2},
-    {name: "orl", args: [DATA_ADDR, CONSTANT], length: 3},
-    {name: "orl", args: [A, CONSTANT], length: 2},
-    {name: "orl", args: [A, DATA_ADDR], length: 2},
-    {name: "orl", args: [A, AT_R0], length: 1},
-    {name: "orl", args: [A, AT_R1], length: 1},
-    {name: "orl", args: [A, R0], length: 1},
-    {name: "orl", args: [A, R1], length: 1},
-    {name: "orl", args: [A, R2], length: 1},
-    {name: "orl", args: [A, R3], length: 1},
-    {name: "orl", args: [A, R4], length: 1},
-    {name: "orl", args: [A, R5], length: 1},
-    {name: "orl", args: [A, R6], length: 1},
-    {name: "orl", args: [A, R7], length: 1},
-    {name: "jnc", args: [CODE_ADDR], length: 2},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "anl", args: [DATA_ADDR, A], length: 2},
-    {name: "anl", args: [DATA_ADDR, CONSTANT], length: 3},
-    {name: "anl", args: [A, CONSTANT], length: 2},
-    {name: "anl", args: [A, DATA_ADDR], length: 2},
-    {name: "anl", args: [A, AT_R0], length: 1},
-    {name: "anl", args: [A, AT_R1], length: 1},
-    {name: "anl", args: [A, R0], length: 1},
-    {name: "anl", args: [A, R1], length: 1},
-    {name: "anl", args: [A, R2], length: 1},
-    {name: "anl", args: [A, R3], length: 1},
-    {name: "anl", args: [A, R4], length: 1},
-    {name: "anl", args: [A, R5], length: 1},
-    {name: "anl", args: [A, R6], length: 1},
-    {name: "anl", args: [A, R7], length: 1},
-    {name: "jz", args: [CODE_ADDR], length: 2},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "xrl", args: [DATA_ADDR, A], length: 2},
-    {name: "xrl", args: [DATA_ADDR, CONSTANT], length: 3},
-    {name: "xrl", args: [A, CONSTANT], length: 2},
-    {name: "xrl", args: [A, DATA_ADDR], length: 2},
-    {name: "xrl", args: [A, AT_R0], length: 1},
-    {name: "xrl", args: [A, AT_R1], length: 1},
-    {name: "xrl", args: [A, R0], length: 1},
-    {name: "xrl", args: [A, R1], length: 1},
-    {name: "xrl", args: [A, R2], length: 1},
-    {name: "xrl", args: [A, R3], length: 1},
-    {name: "xrl", args: [A, R4], length: 1},
-    {name: "xrl", args: [A, R5], length: 1},
-    {name: "xrl", args: [A, R6], length: 1},
-    {name: "xrl", args: [A, R7], length: 1},
-    {name: "jnz", args: [CODE_ADDR], length: 2},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "orl", args: [CODE_ADDR], length: 2},
-    {name: "jmp", args: [AT_A, PLUS, DPTR], length: 1},
-    {name: "mov", args: [A, CONSTANT], length: 2},
-    {name: "mov", args: [DATA_ADDR, CONSTANT], length: 3},
-    {name: "mov", args: [AT_R0, CONSTANT], length: 2},
-    {name: "mov", args: [AT_R1, CONSTANT], length: 2},
-    {name: "mov", args: [R0, CONSTANT], length: 2},
-    {name: "mov", args: [R1, CONSTANT], length: 2},
-    {name: "mov", args: [R2, CONSTANT], length: 2},
-    {name: "mov", args: [R3, CONSTANT], length: 2},
-    {name: "mov", args: [R4, CONSTANT], length: 2},
-    {name: "mov", args: [R5, CONSTANT], length: 2},
-    {name: "mov", args: [R6, CONSTANT], length: 2},
-    {name: "mov", args: [R7, CONSTANT], length: 2},
-    {name: "sjmp", args: [CODE_ADDR], length: 2},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "anl", args: [C, BIT_ADDR], length: 2},
-    {name: "movc", args: [A, AT_A, PLUS, PC], length: 1},
-    {name: "div", args: [AB], length: 1},
-    {name: "mov", args: [DATA_ADDR, DATA_ADDR], length: 3},
-    {name: "mov", args: [DATA_ADDR, AT_R0], length: 2},
-    {name: "mov", args: [DATA_ADDR, AT_R1], length: 2},
-    {name: "mov", args: [DATA_ADDR, R0], length: 2},
-    {name: "mov", args: [DATA_ADDR, R1], length: 2},
-    {name: "mov", args: [DATA_ADDR, R2], length: 2},
-    {name: "mov", args: [DATA_ADDR, R3], length: 2},
-    {name: "mov", args: [DATA_ADDR, R4], length: 2},
-    {name: "mov", args: [DATA_ADDR, R5], length: 2},
-    {name: "mov", args: [DATA_ADDR, R6], length: 2},
-    {name: "mov", args: [DATA_ADDR, R7], length: 2},
-    {name: "mov", args: [DPTR, CONSTANT], length: 3},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "mov", args: [BIT_ADDR, C], length: 2},
-    {name: "movc", args: [A, AT_A, PLUS, DPTR], length: 1},
-    {name: "subb", args: [A, CONSTANT], length: 2},
-    {name: "subb", args: [A, DATA_ADDR], length: 2},
-    {name: "subb", args: [A, AT_R0], length: 1},
-    {name: "subb", args: [A, AT_R1], length: 1},
-    {name: "subb", args: [A, R0], length: 1},
-    {name: "subb", args: [A, R1], length: 1},
-    {name: "subb", args: [A, R2], length: 1},
-    {name: "subb", args: [A, R3], length: 1},
-    {name: "subb", args: [A, R4], length: 1},
-    {name: "subb", args: [A, R5], length: 1},
-    {name: "subb", args: [A, R6], length: 1},
-    {name: "subb", args: [A, R7], length: 1},
-    {name: "reserved orl", args: [A, null /*NOT_BIT_ADDR*/], length: 2},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "mov", args: [C, BIT_ADDR], length: 2},
-    {name: "inc", args: [DPTR], length: 1},
-    {name: "mul", args: [AB], length: 1},
-    {name: "reserved", args: [], length: 0},
-    {name: "mov", args: [AT_R0, DATA_ADDR], length: 2},
-    {name: "mov", args: [AT_R1, DATA_ADDR], length: 2},
-    {name: "mov", args: [R0, DATA_ADDR], length: 2},
-    {name: "mov", args: [R1, DATA_ADDR], length: 2},
-    {name: "mov", args: [R2, DATA_ADDR], length: 2},
-    {name: "mov", args: [R3, DATA_ADDR], length: 2},
-    {name: "mov", args: [R4, DATA_ADDR], length: 2},
-    {name: "mov", args: [R5, DATA_ADDR], length: 2},
-    {name: "mov", args: [R6, DATA_ADDR], length: 2},
-    {name: "mov", args: [R7, DATA_ADDR], length: 2},
-    {name: "reserved anl", args: [C, null /*NOT_BIT_ADDR*/], length: 2},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "cpl", args: [BIT_ADDR], length: 2},
-    {name: "cpl", args: [C], length: 1},
-    {name: "cjne", args: [A, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [A, DATA_ADDR, CODE_ADDR], length: 3},
-    {name: "cjne", args: [AT_R0, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [AT_R1, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R0, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R1, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R2, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R3, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R4, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R5, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R6, CONSTANT, CODE_ADDR], length: 3},
-    {name: "cjne", args: [R7, CONSTANT, CODE_ADDR], length: 3},
-    {name: "push", args: [DATA_ADDR], length: 2},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "clr", args: [BIT_ADDR], length: 2},
-    {name: "clr", args: [C], length: 1},
-    {name: "swap", args: [A], length: 1},
-    {name: "xch", args: [A, DATA_ADDR], length: 2},
-    {name: "xch", args: [A, AT_R0], length: 1},
-    {name: "xch", args: [A, AT_R1], length: 1},
-    {name: "xch", args: [A, R0], length: 1},
-    {name: "xch", args: [A, R1], length: 1},
-    {name: "xch", args: [A, R2], length: 1},
-    {name: "xch", args: [A, R3], length: 1},
-    {name: "xch", args: [A, R4], length: 1},
-    {name: "xch", args: [A, R5], length: 1},
-    {name: "xch", args: [A, R6], length: 1},
-    {name: "xch", args: [A, R7], length: 1},
-    {name: "pop", args: [DATA_ADDR], length: 2},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "setb", args: [BIT_ADDR], length: 2},
-    {name: "setb", args: [C], length: 1},
-    {name: "da", args: [A], length: 1},
-    {name: "djnz", args: [DATA_ADDR, CODE_ADDR], length: 3},
-    {name: "xchd", args: [AT_R0], length: 1},
-    {name: "xchd", args: [AT_R1], length: 1},
-    {name: "djnz", args: [R0, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R1, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R2, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R3, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R4, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R5, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R6, CODE_ADDR], length: 2},
-    {name: "djnz", args: [R7, CODE_ADDR], length: 2},
-    {name: "movx", args: [A, AT_DPTR], length: 1},
-    {name: "ajmp", args: [CODE_ADDR], length: 2},
-    {name: "movx", args: [A, AT_R0], length: 1},
-    {name: "movx", args: [A, AT_R1], length: 1},
-    {name: "clr", args: [A], length: 1},
-    {name: "mov", args: [A, DATA_ADDR], length: 2},
-    {name: "mov", args: [A, AT_R0], length: 1},
-    {name: "mov", args: [A, AT_R1], length: 1},
-    {name: "mov", args: [A, R0], length: 1},
-    {name: "mov", args: [A, R1], length: 1},
-    {name: "mov", args: [A, R2], length: 1},
-    {name: "mov", args: [A, R3], length: 1},
-    {name: "mov", args: [A, R4], length: 1},
-    {name: "mov", args: [A, R5], length: 1},
-    {name: "mov", args: [A, R6], length: 1},
-    {name: "mov", args: [A, R7], length: 1},
-    {name: "movx", args: [AT_DPTR, A], length: 1},
-    {name: "acall", args: [CODE_ADDR], length: 2},
-    {name: "movx", args: [AT_R0, A], length: 1},
-    {name: "movx", args: [AT_R1, A], length: 1},
-    {name: "cpl", args: [A], length: 1},
-    {name: "mov", args: [DATA_ADDR, A], length: 2},
-    {name: "mov", args: [AT_R0, A], length: 1},
-    {name: "mov", args: [AT_R1, A], length: 1},
-    {name: "mov", args: [R0, A], length: 1},
-    {name: "mov", args: [R1, A], length: 1},
-    {name: "mov", args: [R2, A], length: 1},
-    {name: "mov", args: [R3, A], length: 1},
-    {name: "mov", args: [R4, A], length: 1},
-    {name: "mov", args: [R5, A], length: 1},
-    {name: "mov", args: [R6, A], length: 1},
-    {name: "mov", args: [R7, A], length: 1}
+    {name: "nop", args: [], length: 1, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "ljmp", args: [CODE_ADDR], length: 3, swap: false},
+    {name: "rr", args: [A], length: 1, swap: false},
+    {name: "inc", args: [A], length: 1, swap: false},
+    {name: "inc", args: [DATA_ADDR], length: 2, swap: false},
+    {name: "inc", args: [AT_R0], length: 1, swap: false},
+    {name: "inc", args: [AT_R1], length: 1, swap: false},
+    {name: "inc", args: [R0], length: 1, swap: false},
+    {name: "inc", args: [R1], length: 1, swap: false},
+    {name: "inc", args: [R2], length: 1, swap: false},
+    {name: "inc", args: [R3], length: 1, swap: false},
+    {name: "inc", args: [R4], length: 1, swap: false},
+    {name: "inc", args: [R5], length: 1, swap: false},
+    {name: "inc", args: [R6], length: 1, swap: false},
+    {name: "inc", args: [R7], length: 1, swap: false},
+    {name: "jbc", args: [BIT_ADDR, CODE_ADDR], length: 3, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "lcall", args: [CODE_ADDR], length: 3, swap: false},
+    {name: "rrc", args: [A], length: 1, swap: false},
+    {name: "dec", args: [A], length: 1, swap: false},
+    {name: "dec", args: [DATA_ADDR], length: 2, swap: false},
+    {name: "dec", args: [AT_R0], length: 1, swap: false},
+    {name: "dec", args: [AT_R1], length: 1, swap: false},
+    {name: "dec", args: [R0], length: 1, swap: false},
+    {name: "dec", args: [R1], length: 1, swap: false},
+    {name: "dec", args: [R2], length: 1, swap: false},
+    {name: "dec", args: [R3], length: 1, swap: false},
+    {name: "dec", args: [R4], length: 1, swap: false},
+    {name: "dec", args: [R5], length: 1, swap: false},
+    {name: "dec", args: [R6], length: 1, swap: false},
+    {name: "dec", args: [R7], length: 1, swap: false},
+    {name: "jb", args: [BIT_ADDR, CODE_ADDR], length: 3, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "ret", args: [], length: 1, swap: false},
+    {name: "rl", args: [A], length: 1, swap: false},
+    {name: "add", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "add", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "add", args: [A, AT_R0], length: 1, swap: false},
+    {name: "add", args: [A, AT_R1], length: 1, swap: false},
+    {name: "add", args: [A, R0], length: 1, swap: false},
+    {name: "add", args: [A, R1], length: 1, swap: false},
+    {name: "add", args: [A, R2], length: 1, swap: false},
+    {name: "add", args: [A, R3], length: 1, swap: false},
+    {name: "add", args: [A, R4], length: 1, swap: false},
+    {name: "add", args: [A, R5], length: 1, swap: false},
+    {name: "add", args: [A, R6], length: 1, swap: false},
+    {name: "add", args: [A, R7], length: 1, swap: false},
+    {name: "jnb", args: [BIT_ADDR, CODE_ADDR], length: 3, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "reti", args: [], length: 1, swap: false},
+    {name: "rlc", args: [A], length: 1, swap: false},
+    {name: "addc", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "addc", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "addc", args: [A, AT_R0], length: 1, swap: false},
+    {name: "addc", args: [A, AT_R1], length: 1, swap: false},
+    {name: "addc", args: [A, R0], length: 1, swap: false},
+    {name: "addc", args: [A, R1], length: 1, swap: false},
+    {name: "addc", args: [A, R2], length: 1, swap: false},
+    {name: "addc", args: [A, R3], length: 1, swap: false},
+    {name: "addc", args: [A, R4], length: 1, swap: false},
+    {name: "addc", args: [A, R5], length: 1, swap: false},
+    {name: "addc", args: [A, R6], length: 1, swap: false},
+    {name: "addc", args: [A, R7], length: 1, swap: false},
+    {name: "jc", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "orl", args: [DATA_ADDR, A], length: 2, swap: true},
+    {name: "orl", args: [DATA_ADDR, CONSTANT], length: 3, swap: false},
+    {name: "orl", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "orl", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "orl", args: [A, AT_R0], length: 1, swap: false},
+    {name: "orl", args: [A, AT_R1], length: 1, swap: false},
+    {name: "orl", args: [A, R0], length: 1, swap: false},
+    {name: "orl", args: [A, R1], length: 1, swap: false},
+    {name: "orl", args: [A, R2], length: 1, swap: false},
+    {name: "orl", args: [A, R3], length: 1, swap: false},
+    {name: "orl", args: [A, R4], length: 1, swap: false},
+    {name: "orl", args: [A, R5], length: 1, swap: false},
+    {name: "orl", args: [A, R6], length: 1, swap: false},
+    {name: "orl", args: [A, R7], length: 1, swap: false},
+    {name: "jnc", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "anl", args: [DATA_ADDR, A], length: 2, swap: true},
+    {name: "anl", args: [DATA_ADDR, CONSTANT], length: 3, swap: false},
+    {name: "anl", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "anl", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "anl", args: [A, AT_R0], length: 1, swap: false},
+    {name: "anl", args: [A, AT_R1], length: 1, swap: false},
+    {name: "anl", args: [A, R0], length: 1, swap: false},
+    {name: "anl", args: [A, R1], length: 1, swap: false},
+    {name: "anl", args: [A, R2], length: 1, swap: false},
+    {name: "anl", args: [A, R3], length: 1, swap: false},
+    {name: "anl", args: [A, R4], length: 1, swap: false},
+    {name: "anl", args: [A, R5], length: 1, swap: false},
+    {name: "anl", args: [A, R6], length: 1, swap: false},
+    {name: "anl", args: [A, R7], length: 1, swap: false},
+    {name: "jz", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "xrl", args: [DATA_ADDR, A], length: 2, swap: true},
+    {name: "xrl", args: [DATA_ADDR, CONSTANT], length: 3, swap: false},
+    {name: "xrl", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "xrl", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "xrl", args: [A, AT_R0], length: 1, swap: false},
+    {name: "xrl", args: [A, AT_R1], length: 1, swap: false},
+    {name: "xrl", args: [A, R0], length: 1, swap: false},
+    {name: "xrl", args: [A, R1], length: 1, swap: false},
+    {name: "xrl", args: [A, R2], length: 1, swap: false},
+    {name: "xrl", args: [A, R3], length: 1, swap: false},
+    {name: "xrl", args: [A, R4], length: 1, swap: false},
+    {name: "xrl", args: [A, R5], length: 1, swap: false},
+    {name: "xrl", args: [A, R6], length: 1, swap: false},
+    {name: "xrl", args: [A, R7], length: 1, swap: false},
+    {name: "jnz", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "orl", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "jmp", args: [AT_A, PLUS, DPTR], length: 1, swap: false},
+    {name: "mov", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [DATA_ADDR, CONSTANT], length: 3, swap: false},
+    {name: "mov", args: [AT_R0, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [AT_R1, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R0, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R1, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R2, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R3, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R4, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R5, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R6, CONSTANT], length: 2, swap: false},
+    {name: "mov", args: [R7, CONSTANT], length: 2, swap: false},
+    {name: "sjmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "anl", args: [C, BIT_ADDR], length: 2, swap: false},
+    {name: "movc", args: [A, AT_A, PLUS, PC], length: 1, swap: false},
+    {name: "div", args: [AB], length: 1, swap: false},
+    {name: "mov", args: [DATA_ADDR, DATA_ADDR], length: 3, swap: true},
+    {name: "mov", args: [DATA_ADDR, AT_R0], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, AT_R1], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R0], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R1], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R2], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R3], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R4], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R5], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R6], length: 2, swap: true},
+    {name: "mov", args: [DATA_ADDR, R7], length: 2, swap: true},
+    {name: "mov", args: [DPTR, CONSTANT], length: 3, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "mov", args: [BIT_ADDR, C], length: 2, swap: true},
+    {name: "movc", args: [A, AT_A, PLUS, DPTR], length: 1, swap: false},
+    {name: "subb", args: [A, CONSTANT], length: 2, swap: false},
+    {name: "subb", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "subb", args: [A, AT_R0], length: 1, swap: false},
+    {name: "subb", args: [A, AT_R1], length: 1, swap: false},
+    {name: "subb", args: [A, R0], length: 1, swap: false},
+    {name: "subb", args: [A, R1], length: 1, swap: false},
+    {name: "subb", args: [A, R2], length: 1, swap: false},
+    {name: "subb", args: [A, R3], length: 1, swap: false},
+    {name: "subb", args: [A, R4], length: 1, swap: false},
+    {name: "subb", args: [A, R5], length: 1, swap: false},
+    {name: "subb", args: [A, R6], length: 1, swap: false},
+    {name: "subb", args: [A, R7], length: 1, swap: false},
+    {name: "reserved orl", args: [A, null /*NOT_BIT_ADDR*/], length: 2, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "mov", args: [C, BIT_ADDR], length: 2, swap: false},
+    {name: "inc", args: [DPTR], length: 1, swap: false},
+    {name: "mul", args: [AB], length: 1, swap: false},
+    {name: "reserved", args: [], length: 0, swap: false},
+    {name: "mov", args: [AT_R0, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [AT_R1, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R0, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R1, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R2, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R3, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R4, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R5, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R6, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [R7, DATA_ADDR], length: 2, swap: false},
+    {name: "reserved anl", args: [C, null /*NOT_BIT_ADDR*/], length: 2, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "cpl", args: [BIT_ADDR], length: 2, swap: false},
+    {name: "cpl", args: [C], length: 1, swap: false},
+    {name: "cjne", args: [A, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [A, DATA_ADDR, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [AT_R0, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [AT_R1, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R0, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R1, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R2, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R3, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R4, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R5, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R6, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "cjne", args: [R7, CONSTANT, CODE_ADDR], length: 3, swap: false},
+    {name: "push", args: [DATA_ADDR], length: 2, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "clr", args: [BIT_ADDR], length: 2, swap: false},
+    {name: "clr", args: [C], length: 1, swap: false},
+    {name: "swap", args: [A], length: 1, swap: false},
+    {name: "xch", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "xch", args: [A, AT_R0], length: 1, swap: false},
+    {name: "xch", args: [A, AT_R1], length: 1, swap: false},
+    {name: "xch", args: [A, R0], length: 1, swap: false},
+    {name: "xch", args: [A, R1], length: 1, swap: false},
+    {name: "xch", args: [A, R2], length: 1, swap: false},
+    {name: "xch", args: [A, R3], length: 1, swap: false},
+    {name: "xch", args: [A, R4], length: 1, swap: false},
+    {name: "xch", args: [A, R5], length: 1, swap: false},
+    {name: "xch", args: [A, R6], length: 1, swap: false},
+    {name: "xch", args: [A, R7], length: 1, swap: false},
+    {name: "pop", args: [DATA_ADDR], length: 2, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "setb", args: [BIT_ADDR], length: 2, swap: false},
+    {name: "setb", args: [C], length: 1, swap: false},
+    {name: "da", args: [A], length: 1, swap: false},
+    {name: "djnz", args: [DATA_ADDR, CODE_ADDR], length: 3, swap: false},
+    {name: "xchd", args: [AT_R0], length: 1, swap: false},
+    {name: "xchd", args: [AT_R1], length: 1, swap: false},
+    {name: "djnz", args: [R0, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R1, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R2, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R3, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R4, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R5, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R6, CODE_ADDR], length: 2, swap: false},
+    {name: "djnz", args: [R7, CODE_ADDR], length: 2, swap: false},
+    {name: "movx", args: [A, AT_DPTR], length: 1, swap: false},
+    {name: "ajmp", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "movx", args: [A, AT_R0], length: 1, swap: false},
+    {name: "movx", args: [A, AT_R1], length: 1, swap: false},
+    {name: "clr", args: [A], length: 1, swap: false},
+    {name: "mov", args: [A, DATA_ADDR], length: 2, swap: false},
+    {name: "mov", args: [A, AT_R0], length: 1, swap: false},
+    {name: "mov", args: [A, AT_R1], length: 1, swap: false},
+    {name: "mov", args: [A, R0], length: 1, swap: false},
+    {name: "mov", args: [A, R1], length: 1, swap: false},
+    {name: "mov", args: [A, R2], length: 1, swap: false},
+    {name: "mov", args: [A, R3], length: 1, swap: false},
+    {name: "mov", args: [A, R4], length: 1, swap: false},
+    {name: "mov", args: [A, R5], length: 1, swap: false},
+    {name: "mov", args: [A, R6], length: 1, swap: false},
+    {name: "mov", args: [A, R7], length: 1, swap: false},
+    {name: "movx", args: [AT_DPTR, A], length: 1, swap: false},
+    {name: "acall", args: [CODE_ADDR], length: 2, swap: false},
+    {name: "movx", args: [AT_R0, A], length: 1, swap: false},
+    {name: "movx", args: [AT_R1, A], length: 1, swap: false},
+    {name: "cpl", args: [A], length: 1, swap: false},
+    {name: "mov", args: [DATA_ADDR, A], length: 2, swap: true},
+    {name: "mov", args: [AT_R0, A], length: 1, swap: false},
+    {name: "mov", args: [AT_R1, A], length: 1, swap: false},
+    {name: "mov", args: [R0, A], length: 1, swap: false},
+    {name: "mov", args: [R1, A], length: 1, swap: false},
+    {name: "mov", args: [R2, A], length: 1, swap: false},
+    {name: "mov", args: [R3, A], length: 1, swap: false},
+    {name: "mov", args: [R4, A], length: 1, swap: false},
+    {name: "mov", args: [R5, A], length: 1, swap: false},
+    {name: "mov", args: [R6, A], length: 1, swap: false},
+    {name: "mov", args: [R7, A], length: 1, swap: false}
   ];
 
   for(var i = 0; i < this.opcodes.length; i++) {
@@ -681,7 +680,8 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     opcodes[lineIndex] = {opcode: opcode, address: byteAddr};
 
     // special case for mov data_addr, data_addr because its source and dest are swapped memory-wise
-    if(opcode.opcode === 0x85) {
+    // also special case mov direct, anything because they are sad
+    if(opcode.swap) {
       // swap src and dst
       var tmp = tokens[2];
       tokens[2] = tokens[1];
@@ -702,16 +702,21 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
           byteOffset -= 1;
           programBytes[byteAddr+byteOffset] = (targetAddr & 0xff00) >> 8;
           break;
-        case "sjmp":
-        case "jz":
+        case "jb":
+        case "jbc":
+        case "jc":
+        case "jnb":
+        case "jnc":
         case "jnz":
+        case "jz":
+        case "sjmp":
         case "cjne":
         case "djnz":
           var offset = targetAddr - byteAddr - opcode.length;
           if(offset > 127 || offset < -128) {
             errors.push({line: lineIndex, text: "Relative jump offset out of range"});
           }
-          programBytes[byteAddr+byteOffset] = offset;
+          programBytes[byteAddr+byteOffset] = (offset+256)&0xff;
           // relative addring
           break;
         case "ajmp":
@@ -834,9 +839,7 @@ Proc8051.prototype.generateAssembly = function(text) {
   return this.getGeneratePassResults(tokenGroups, labelAddresses);
 };
 
-Proc8051.prototype.generateHex = function(text) {
-  var assembly = this.generateAssembly(text);
-
+Proc8051.prototype.generateHex = function(assembly) {
   if(assembly.errors.length > 0) {
     return {
       hex: null,
@@ -846,14 +849,7 @@ Proc8051.prototype.generateHex = function(text) {
   }
 
   var encodeResults = new Encoder().encode(assembly.programBytes, assembly.programBytesLength);
-  var errors = encodeResults.errors.concat(assembly.errors);
-  var warnings = encodeResults.warnings.concat(assembly.warnings);
 
-
-  return {
-    hex: encodeResults,
-    warnings: warnings,
-    errors: errors
-  };
+  return encodeResults;
 };
 
