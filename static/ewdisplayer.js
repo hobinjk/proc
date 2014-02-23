@@ -4,6 +4,7 @@
  */
 
 /* jshint undef: true, unused: true, browser: true, moz: true */
+/* global Encoder */
 /* environment browser */
 
 function EWDisplayer(editor) {
@@ -94,7 +95,7 @@ EWDisplayer.prototype.onChange = function(text) {
 
       var listing = "";
       for(var offset = 0; offset < opcode.length; offset++) {
-        listing += programBytes[address+offset].toString(16).toUpperCase();
+        listing += Encoder.prototype.hex(programBytes[address+offset].toString(16).toUpperCase(), 2);
         if(offset < opcode.length - 1) {
           listing += " ";
         }
