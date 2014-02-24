@@ -12,6 +12,9 @@ function Proc() {
   this.docUrl = "http://google.com/#q=%s";
   this.whiteSpaceRegex = /([ ,]+|\n)/;
   this.organizationSpecifier = ".org";
+  this.equivalenceSpecifier = ".equ";
+  this.databaseSpecifier = ".db";
+  this.stringConstantRegex = /['"]([^'"]+)['"]/;
   this.commentStart = ";";
 }
 
@@ -23,6 +26,9 @@ Proc.CONSTANT = 3;
 Proc.SYMBOL = 4;
 Proc.ORGANIZATION = 5;
 Proc.COMMENT = 6;
+Proc.EQUIVALENCE = 7;
+Proc.DATABASE = 8;
+Proc.STRING_CONSTANT = 9;
 
 Proc.prototype.addInstruction = function(name, description) {
   this.instructions.push({name: name.toLowerCase(), description: description, type: Proc.INSTRUCTION});
@@ -129,8 +135,37 @@ Proc.prototype.isOrganization = function(token) {
 };
 
 Proc.prototype.getOrganization = function() {
-  return {type: Proc.ORGANIZATION};
+  return {type: Proc.ORGANIZATION, description: "organization address"};
 };
+
+Proc.prototype.isDatabase = function(token) {
+  return token === this.databaseSpecifier;
+};
+
+Proc.prototype.getDatabase = function() {
+  return {type: Proc.DATABASE, description: "database bytes"};
+};
+
+Proc.prototype.isEquivalence = function(token) {
+  return token === this.equivalenceSpecifier;
+};
+
+Proc.prototype.getEquivalence = function() {
+  return {type: Proc.EQUIVALENCE, description: "define equivalence"};
+};
+
+Proc.prototype.isStringConstant = function(token) {
+  return this.stringConstantRegex.test(token);
+};
+
+Proc.prototype.getStringConstant = function(token) {
+  var matches = token.match(this.stringConstantRegex);
+  if(matches.length < 2) {
+    throw new Error(token+" is not a valid string constant");
+  }
+  return {type: Proc.STRING_CONSTANT, description: "string constant", value: matches[1]};
+};
+
 
 Proc.prototype.getComment = function() {
   return {type: Proc.COMMENT};
@@ -157,6 +192,18 @@ Proc.prototype.getToken = function(token) {
 
   if(this.isOrganization(token)) {
     return this.getOrganization(token);
+  }
+
+  if(this.isDatabase(token)) {
+    return this.getDatabase(token);
+  }
+
+  if(this.isEquivalence(token)) {
+    return this.getEquivalence(token);
+  }
+
+  if(this.isStringConstant(token)) {
+    return this.getStringConstant(token);
   }
 
   return {type: Proc.INVALID};
