@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true, browser: true, moz: true */
-/* global console */
+/* global console, Instruction, Symbol, LabelReference, LabelDeclaration, StringConstant, Constant, Database, Organization, Equivalence, Comment, Invalid */
 /* environment browser */
 
 function Proc() {
@@ -18,29 +18,17 @@ function Proc() {
   this.commentStart = ";";
 }
 
-Proc.INVALID = -1;
-Proc.INSTRUCTION = 0;
-Proc.LABEL_DECLARATION = 1;
-Proc.LABEL_REFERENCE = 2;
-Proc.CONSTANT = 3;
-Proc.SYMBOL = 4;
-Proc.ORGANIZATION = 5;
-Proc.COMMENT = 6;
-Proc.EQUIVALENCE = 7;
-Proc.DATABASE = 8;
-Proc.STRING_CONSTANT = 9;
-
 Proc.prototype.addInstruction = function(name, description) {
-  this.instructions.push({name: name.toLowerCase(), description: description, type: Proc.INSTRUCTION});
+  this.instructions.push(new Instruction(name, description));
 };
 
 Proc.prototype.addSymbol = function(name, address, description, width) {
-  this.symbols.push({name: name.toLowerCase(), address: address, description: description, type: Proc.SYMBOL, width: width});
+  this.symbols.push(new Symbol(name, description, address, width));
 };
 
 Proc.prototype.addLabelDeclaration = function(name) {
   if(this.getLabelDeclarationByName(name)) return;
-  this.labelDeclarations.push({name: name.toLowerCase(), type: Proc.LABEL_DECLARATION});
+  this.labelDeclarations.push(new LabelDeclaration(name));
 };
 
 Proc.prototype.getInstructionByName = function(name) {
@@ -52,13 +40,6 @@ Proc.prototype.getInstructionByName = function(name) {
     }
   }
   return null;
-};
-
-Proc.prototype.getDescription = function(name) {
-  var instr = this.getInstructionByName(name);
-  if(instr)
-    return instr.description;
-  return "there is no help for you here";
 };
 
 Proc.prototype.clearDeclarations = function() {
@@ -82,7 +63,7 @@ Proc.prototype.isLabelDeclaration = function(token) {
 Proc.prototype.getLabelReference = function(token) {
   var labelDecl = this.getLabelDeclarationByName(token);
   if(labelDecl) {
-    return {name: labelDecl.name, type: Proc.LABEL_REFERENCE};
+    return new LabelReference(labelDecl.name);
   }
   return null;
 };
@@ -105,7 +86,7 @@ Proc.prototype.isConstant = function(token) {
 Proc.prototype.getConstant = function(token) {
   var matches = token.match(this.constantRegex);
   if(matches.length < 2) throw new Error("Token \""+token+"\" is not a constant");
-  return {value: this.parseConstant(matches[1]), type: Proc.CONSTANT};
+  return new Constant(this.parseConstant(matches[1]));
 };
 
 Proc.prototype.parseConstant = function(constant) {
@@ -135,7 +116,7 @@ Proc.prototype.isOrganization = function(token) {
 };
 
 Proc.prototype.getOrganization = function() {
-  return {type: Proc.ORGANIZATION, description: "organization address"};
+  return new Organization();
 };
 
 Proc.prototype.isDatabase = function(token) {
@@ -143,7 +124,7 @@ Proc.prototype.isDatabase = function(token) {
 };
 
 Proc.prototype.getDatabase = function() {
-  return {type: Proc.DATABASE, description: "database bytes"};
+  return new Database();
 };
 
 Proc.prototype.isEquivalence = function(token) {
@@ -151,7 +132,7 @@ Proc.prototype.isEquivalence = function(token) {
 };
 
 Proc.prototype.getEquivalence = function() {
-  return {type: Proc.EQUIVALENCE, description: "define equivalence"};
+  return new Equivalence();
 };
 
 Proc.prototype.isStringConstant = function(token) {
@@ -163,12 +144,12 @@ Proc.prototype.getStringConstant = function(token) {
   if(matches.length < 2) {
     throw new Error(token+" is not a valid string constant");
   }
-  return {type: Proc.STRING_CONSTANT, description: "string constant", value: matches[1]};
+  return new StringConstant(matches[1]);
 };
 
 
 Proc.prototype.getComment = function() {
-  return {type: Proc.COMMENT};
+  return new Comment();
 };
 
 Proc.prototype.getToken = function(token) {
@@ -206,7 +187,7 @@ Proc.prototype.getToken = function(token) {
     return this.getStringConstant(token);
   }
 
-  return {type: Proc.INVALID};
+  return new Invalid();
 };
 
 Proc.prototype.getTokenPairs = function(line) {
@@ -249,7 +230,7 @@ Proc.prototype.getTokenPairsByLine = function(text) {
     var allGood = true;
     var tokenPairs = tokenPairsByLine[lineIndex];
     for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
-      if(tokenPairs[tokenIndex].token.type === Proc.INVALID) {
+      if(!tokenPairs[tokenIndex].token.isValid()) {
         allGood = false;
         break;
       }

@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true, browser: true, moz: true */
-/* global Proc8051, Proc, console */
+/* global Proc8051, console, Token */
 /* environment browser */
 
 function Editor() {
@@ -10,14 +10,14 @@ function Editor() {
   this.enabled = false;
 
   this.classType = {};
-  this.classType[Proc.INSTRUCTION] = "ins";
-  this.classType[Proc.SYMBOL] = "sym";
-  this.classType[Proc.CONSTANT] = "con";
-  this.classType[Proc.LABEL_DECLARATION] = "lbl";
-  this.classType[Proc.LABEL_REFERENCE] = "lbl";
-  this.classType[Proc.ORGANIZATION] = "org";
-  this.classType[Proc.COMMENT] = "cmt";
-  this.classType[Proc.INVALID] = "inv";
+  this.classType[Token.INSTRUCTION] = "ins";
+  this.classType[Token.SYMBOL] = "sym";
+  this.classType[Token.CONSTANT] = "con";
+  this.classType[Token.LABEL_DECLARATION] = "lbl";
+  this.classType[Token.LABEL_REFERENCE] = "lbl";
+  this.classType[Token.ORGANIZATION] = "org";
+  this.classType[Token.COMMENT] = "cmt";
+  this.classType[Token.INVALID] = "inv";
 
   this.editor.addEventListener("input", this.handleInput.bind(this), false);
   this.editor.addEventListener("keydown", this.handleKeyDown.bind(this), false);

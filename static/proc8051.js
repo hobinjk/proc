@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true, browser: true, moz: true */
-/* global Proc, Encoder */
+/* global Encoder, Token, Proc */
 /* environment browser */
 
 function Proc8051() {
@@ -229,17 +229,17 @@ function Proc8051() {
   var PLUS = makeEqualTest(this.getSymbol("+"));
   var PC = makeEqualTest(this.getSymbol("PC"));
 
-  var CODE_ADDR = makeTypeTest(Proc.LABEL_REFERENCE);
+  var CODE_ADDR = makeTypeTest(Token.LABEL_REFERENCE);
   var BIT_ADDR = function(testToken) {
-    return (testToken.type === Proc.SYMBOL) && (testToken.width === 1);
+    return (testToken.type === Token.SYMBOL) && (testToken.width === 1);
   };
 
   var DATA_ADDR = function(testToken) {
-    return ((testToken.type === Proc.SYMBOL) && (testToken.width === 8)) ||
-      testToken.type === Proc.CONSTANT;
+    return ((testToken.type === Token.SYMBOL) && (testToken.width === 8)) ||
+      testToken.type === Token.CONSTANT;
   };
 
-  var CONSTANT = makeTypeTest(Proc.CONSTANT);
+  var CONSTANT = makeTypeTest(Token.CONSTANT);
 
 
   // CODE_ADDR is a label, arguably could be a constant code address to jump to
@@ -513,7 +513,7 @@ function Proc8051() {
 
 }
 
-Proc8051.prototype = Proc.prototype;
+Proc8051.prototype = Object.create(Proc.prototype);
 
 Proc8051.prototype.parseConstant = function(constant) {
   var base = constant.charAt(constant.length-1).toLowerCase();
@@ -553,12 +553,8 @@ Proc8051.prototype.getLengthPassResults = function(text) {
   var labelAddresses = {};
   var byteAddr = 0;
 
-  function tokenTypeValid(t) {
-    return (t.type !== Proc.INVALID) && (t.type !== Proc.COMMENT);
-  }
-
   function tokenPairTypeValid(tp) {
-    return tokenTypeValid(tp.token);
+    return tp.token.isValid();
   }
 
   function getTokenPairToken(tp) {
@@ -575,12 +571,12 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
       var tokenText = tokenPairs[tokenIndex].text;
       var token = tokenPairs[tokenIndex].token;
-      if(tokenTypeValid(token)) {
+      if(token.isValid()) {
         tokensInLine = true;
         continue;
       }
 
-      if(token.type === Proc.INVALID) {
+      if(token.type === Token.INVALID) {
         if((!this.whiteSpaceRegex.test(tokenText)) && (tokenText.length > 0)) {
           errors.push({line: lineIndex, text: "Invalid token \""+tokenText+"\""});
           errorInLine = true;
@@ -600,8 +596,8 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     tokenGroups.push(tokens);
 
     // handle a .org specifier by setting the current program offset
-    if(tokens[0].type === Proc.ORGANIZATION) {
-      if(tokens[1].type === Proc.CONSTANT) {
+    if(tokens[0].type === Token.ORGANIZATION) {
+      if(tokens[1].type === Token.CONSTANT) {
         byteAddr = tokens[1].value;
         if(tokens.length > 2) {
           warnings.push({line: lineIndex, text: "Junk after organization specifier"});
@@ -612,7 +608,7 @@ Proc8051.prototype.getLengthPassResults = function(text) {
       continue;
     }
     // add a new label at the current location
-    if(tokens[0].type === Proc.LABEL_DECLARATION) {
+    if(tokens[0].type === Token.LABEL_DECLARATION) {
       labelAddresses[tokens[0].name] = byteAddr;
       if(tokens.length > 1) {
         warnings.push({line: lineIndex, text: "Junk after label"});
@@ -621,13 +617,13 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     }
 
     // constants can't start lines
-    if(tokens[0].type === Proc.CONSTANT) {
+    if(tokens[0].type === Token.CONSTANT) {
       errors.push({line: lineIndex, text: "Lines may not start with constants"});
       continue;
     }
 
     // symbols can't start lines
-    if(tokens[0].type === Proc.SYMBOL) {
+    if(tokens[0].type === Token.SYMBOL) {
       errors.push({line: lineIndex, text: "Lines may not start with symbols"});
       continue;
     }
@@ -661,12 +657,12 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     var tokens = tokenGroups[lineIndex];
     if(tokens.length === 0) continue;
 
-    if(tokens[0].type === Proc.ORGANIZATION) {
+    if(tokens[0].type === Token.ORGANIZATION) {
       byteAddr = tokens[1].value;
       continue;
     }
 
-    if(tokens[0].type !== Proc.INSTRUCTION) {
+    if(tokens[0].type !== Token.INSTRUCTION) {
       continue;
     }
 
@@ -691,7 +687,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     for(var byteOffset = opcode.length - 1; byteOffset > 0; byteOffset--) {
       var tokenOffset = byteOffset - opcode.length + tokens.length;
       var token = tokens[tokenOffset];
-      if(token.type === Proc.LABEL_REFERENCE) {
+      if(token.type === Token.LABEL_REFERENCE) {
         // must distinguish between absolute and relative addressing
         var targetAddr = labelAddresses[token.name];
         switch(opcode.name) {
@@ -734,14 +730,16 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
         }
 
       } else {
-        var byteRepResults = this.getByteRepresentation(token);
-        for(var errorText of byteRepResults.errors) {
-          errors.push({line: lineIndex, text: errorText});
+        try {
+          var byteRepresentation = token.getByteRepresentation();
+          if(byteRepresentation.length > 1 || byteRepresentation.length === 0 ||
+             byteRepresentation[0] > 255 || byteRepresentation[0] < -128) {
+            errors.push({line: lineIndex, text: "Malformed byte representation"});
+          }
+          programBytes[byteAddr+byteOffset] = byteRepresentation[0];
+        } catch(e) {
+          errors.push({line: lineIndex, text: e.message});
         }
-        for(var warningText of byteRepResults.warnings) {
-          warnings.push({line: lineIndex, text: warningText});
-        }
-        programBytes[byteAddr+byteOffset] = byteRepResults.value;
       }
     }
 
@@ -752,7 +750,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
 };
 
 Proc8051.prototype.getOpcode = function(tokens) {
-  if(tokens[0].type !== Proc.INSTRUCTION)
+  if(tokens[0].type !== Token.INSTRUCTION)
     throw new Error("opcodes need instructions first");
 
   // opcodes are grouped by instruction name
@@ -796,29 +794,6 @@ Proc8051.prototype.getOpcode = function(tokens) {
     }
   }
   return bestInstr;
-};
-
-Proc8051.prototype.getByteRepresentation = function(token) {
-  var warnings = [];
-  var errors = [];
-
-  if(token.type === Proc.CONSTANT) {
-    if(token.value > 255 || token < 0) {
-      warnings.push("Clamped constant byte value");
-      token = (token+256)%256;
-    }
-    return {errors: errors, warnings: warnings, value: token.value};
-  }
-
-  if(token.type === Proc.SYMBOL) {
-    if(token.address < 0) {
-      errors.push("Symbol \""+token.name+"\" is not addressable");
-    }
-    return {errors: errors, warnings: warnings, value: token.address};
-  }
-
-  errors.push("Can not convert "+token.name+" (type "+token.type+") to byte");
-  return {errors: errors, warnings: warnings, value: -1};
 };
 
 Proc8051.prototype.generateAssembly = function(text) {
