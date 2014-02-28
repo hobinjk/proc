@@ -75,8 +75,8 @@ EWDisplayer.prototype.onChange = function(text) {
   } else {
     var downloadLink = this.makeDownloadLink(this.proc.generateHex(assemblyResults));
     var currentDownloadLink = document.getElementById(downloadLink.id);
-    if(currentDownloadLink) {
-      currentDownloadLink.parent.removeChild(currentDownloadLink);
+    if(currentDownloadLink && currentDownloadLink.parentNode) {
+      currentDownloadLink.parentNode.removeChild(currentDownloadLink);
     }
     document.getElementById("topbar").appendChild(downloadLink);
 
