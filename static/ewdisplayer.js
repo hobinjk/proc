@@ -50,7 +50,7 @@ EWDisplayer.prototype.onChange = function(text) {
   var assemblyResults = this.proc.generateAssembly(text);
   var errors = assemblyResults.errors;
   var warnings = assemblyResults.warnings;
-  var opcodes = assemblyResults.opcodes;
+  var listings = assemblyResults.listings;
   var programBytes = assemblyResults.programBytes;
   var lines = [];
   var lineIndex = 0;
@@ -82,26 +82,20 @@ EWDisplayer.prototype.onChange = function(text) {
 
 
 
-    for(lineIndex = 0; lineIndex < opcodes.length; lineIndex++) {
-      var opcodeBundle = opcodes[lineIndex];
-      if(!opcodeBundle) {
+    for(lineIndex = 0; lineIndex < listings.length; lineIndex++) {
+      var listing = listings[lineIndex];
+      if(!listing) {
         continue;
       }
-      var opcode = opcodeBundle.opcode;
-      if(!opcode) {
-        continue;
-      }
-      var address = opcodeBundle.address;
-
-      var listing = "";
-      for(var offset = 0; offset < opcode.length; offset++) {
-        listing += Encoder.prototype.hex(programBytes[address+offset].toString(16).toUpperCase(), 2);
-        if(offset < opcode.length - 1) {
-          listing += " ";
+      var listingText = "";
+      for(var offset = 0; offset < listing.length; offset++) {
+        listingText += Encoder.prototype.hex(programBytes[listing.address+offset], 2);
+        if(offset < listing.length - 1) {
+          listingText += " ";
         }
       }
 
-      lines[lineIndex] = [this.makeListing(listing)];
+      lines[lineIndex] = [this.makeListing(listingText)];
     }
   }
 

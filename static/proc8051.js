@@ -630,6 +630,20 @@ Proc8051.prototype.getLengthPassResults = function(text) {
       continue;
     }
 
+
+    if(tokens[0].type === Token.DATABASE) {
+      for(var i = 1; i < tokens.length; i++) {
+        var dbToken = tokens[i];
+        try {
+          byteAddr += dbToken.getByteRepresentation().length;
+        } catch(e) {
+          errors.push({line: lineIndex, text: "Databases require constant tokens"});
+        }
+      }
+      continue;
+    }
+
+
     // get the opcode of the current instruction
     var opcode = this.getOpcode(tokens);
     if(!opcode) {
@@ -651,7 +665,7 @@ Proc8051.prototype.getLengthPassResults = function(text) {
 Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses) {
   var byteAddr = 0;
   var programBytes = new Uint8Array(64*1024); //about 64k of memory, whatever
-  var opcodes = new Array(tokenGroups.length);
+  var listings = new Array(tokenGroups.length);
   var errors = [];
   var warnings = [];
 
@@ -664,6 +678,20 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
       continue;
     }
 
+    if(tokens[0].type === Token.DATABASE) {
+      var dbStartAddr = byteAddr + 0;
+      for(var i = 1; i < tokens.length; i++) {
+        var byteRep = tokens[i].getByteRepresentation();
+        for(var j = 0; j < byteRep.length; j++) {
+          programBytes[byteAddr+j] = byteRep[j];
+        }
+        byteAddr += byteRep.length;
+      }
+      listings[lineIndex] = {length: byteAddr - dbStartAddr, address: dbStartAddr};
+      continue;
+    }
+
+
     if(tokens[0].type !== Token.INSTRUCTION) {
       continue;
     }
@@ -675,7 +703,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     }
 
     programBytes[byteAddr] = opcode.opcode;
-    opcodes[lineIndex] = {opcode: opcode, address: byteAddr};
+    listings[lineIndex] = {length: opcode.length, address: byteAddr};
 
     // special case for mov data_addr, data_addr because its source and dest are swapped memory-wise
     // also special case mov direct, anything because they are sad
@@ -748,7 +776,7 @@ Proc8051.prototype.getGeneratePassResults = function(tokenGroups, labelAddresses
     byteAddr += opcode.length;
   }
 
-  return {errors: errors, warnings: warnings, programBytes: programBytes, programBytesLength: byteAddr, opcodes: opcodes};
+  return {errors: errors, warnings: warnings, programBytes: programBytes, programBytesLength: byteAddr, listings: listings};
 };
 
 Proc8051.prototype.getOpcode = function(tokens) {
