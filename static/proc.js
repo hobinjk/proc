@@ -1,12 +1,11 @@
 /* jshint undef: true, unused: true, browser: true, moz: true */
-/* global console, Instruction, Symbol, LabelReference, LabelDeclaration, StringConstant, Constant, Database, Organization, Equivalence, Comment, Invalid */
+/* global console, Instruction, Symbol, LabelReference, LabelDeclaration, StringConstant, Constant, Database, Organization, Equivalence, Comment, Invalid, Token */
 /* environment browser */
 
 function Proc() {
   this.instructions = [];
   this.symbols = [];
   this.labelDeclarations = [];
-  this.equDeclarations = {};
 
   this.loopRegex = /(\w+):/;
   this.docUrl = "http://google.com/#q=%s";
@@ -46,6 +45,14 @@ Proc.prototype.clearDeclarations = function() {
   this.labelDeclarations = [];
   this.equDeclarations = {};
 };
+
+Proc.prototype.expandEquivalence = function(text) {
+  if(this.equDeclarations.hasOwnProperty(text)) {
+    return this.equDeclarations[text];
+  }
+  return text;
+};
+
 
 Proc.prototype.getLabelDeclarationByName = function(name) {
   for(var i = 0, len = this.labelDeclarations.length; i < len; i++) {
@@ -202,7 +209,7 @@ Proc.prototype.getTokenPairs = function(line) {
   var statementParts = statement.split(this.whiteSpaceRegex);
   var self = this;
   var tokens = statementParts.map(function(part) {
-    return {text: part, token: self.getToken(part)};
+    return {text: part, token: self.getToken(self.expandEquivalence(part))};
   });
   if(commentString.length > 0) {
     tokens.push({text: commentString, token: this.getComment(commentString)});
@@ -217,25 +224,37 @@ Proc.prototype.getTokenPairsByLine = function(text) {
   // clear all existing declarations of equ's and labels
   this.clearDeclarations();
 
+  var self = this;
+
+  function tokenPairNotWhitespace(tp) {
+    return tp.text.length > 0 && !self.whiteSpaceRegex.test(tp.text);
+  }
+
   var line, lineIndex;
   // pass one, getting declarations and anything that doesn't depend on them
   for(lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     line = lines[lineIndex];
-    tokenPairsByLine[lineIndex] = this.getTokenPairs(line);
+    var baseTokenPairs = this.getTokenPairs(line).filter(tokenPairNotWhitespace);
+    // Equivalences are strange and will have invalid tokens
+    if(baseTokenPairs[0] && baseTokenPairs[0].token.type === Token.EQUIVALENCE) {
+      this.equDeclarations[baseTokenPairs[1].text] = baseTokenPairs[2].text;
+      continue;
+    }
+    tokenPairsByLine[lineIndex] = baseTokenPairs;
   }
 
   // pass two, expanding everything
   for(lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     line = lines[lineIndex];
-    var allGood = true;
-    var tokenPairs = tokenPairsByLine[lineIndex];
-    for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
-      if(!tokenPairs[tokenIndex].token.isValid()) {
-        allGood = false;
-        break;
-      }
-    }
-    if(allGood) continue;
+    //var allGood = true;
+    //var tokenPairs = tokenPairsByLine[lineIndex];
+    //for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
+    //  if(!tokenPairs[tokenIndex].token.isValid()) {
+    //    allGood = false;
+    //    break;
+    //  }
+    //}
+    //if(allGood) continue;
     tokenPairsByLine[lineIndex] = this.getTokenPairs(line);
   }
 

@@ -561,13 +561,17 @@ Proc8051.prototype.getLengthPassResults = function(text) {
     return tp.token;
   }
 
+  var self = this;
+  function tokenPairNotWhitespace(tp) {
+    return tp.text.length > 0 && !self.whiteSpaceRegex.test(tp.text);
+  }
+
   for(var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    var tokenPairs = tokenPairsByLine[lineIndex];
+    var tokenPairs = tokenPairsByLine[lineIndex].filter(tokenPairNotWhitespace);
 
     // check validity of tokens. If one of them is legit invalid, report it
     var errorInLine = false;
     var tokensInLine = false;
-
     for(var tokenIndex = 0; tokenIndex < tokenPairs.length; tokenIndex++) {
       var tokenText = tokenPairs[tokenIndex].text;
       var token = tokenPairs[tokenIndex].token;
@@ -577,11 +581,9 @@ Proc8051.prototype.getLengthPassResults = function(text) {
       }
 
       if(token.type === Token.INVALID) {
-        if((!this.whiteSpaceRegex.test(tokenText)) && (tokenText.length > 0)) {
-          errors.push({line: lineIndex, text: "Invalid token \""+tokenText+"\""});
-          errorInLine = true;
-          break;
-        }
+        errors.push({line: lineIndex, text: "Invalid token \""+tokenText+"\""});
+        errorInLine = true;
+        break;
       }
     }
 
